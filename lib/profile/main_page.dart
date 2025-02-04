@@ -120,8 +120,8 @@ class ProfilePageState extends State<ProfilePage> {
       content: Center(child: Text('Current & Eligible Content')),
     ),
     TabItem2(
-      title: 'Previous & Loans',
-      content: Center(child: Text('Previous & Loans Content')),
+      title: 'Previous Loans',
+      content: Center(child: Text('Previous Loans Content')),
     ),
   ];
 

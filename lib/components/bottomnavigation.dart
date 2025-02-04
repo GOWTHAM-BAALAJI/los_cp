@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import './dashboard.dart';
+import '../profile/main_page.dart';
+import '../my_application/applicationScreen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -16,9 +18,9 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
       DashboardScreen(userName: userName),
-      const Center(child: Text('My Portfolio')),
+      applicationScreen(),
       const Center(child: Text('Transaction')),
-      const Center(child: Text('Profile')),
+      ProfilePage(),
     ];
 
     return Column(

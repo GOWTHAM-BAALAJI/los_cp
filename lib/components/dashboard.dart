@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'eligibleCard.dart';
 import 'upcomingTaskWidget.dart';
+import '../my_application/applicationScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userName;
@@ -85,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'My Applications',
+                  'My Portfolio',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -94,6 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 TextButton(
                   onPressed: () {
+                    applicationScreen();
                   },
                   child: const Text(
                     'View All',
@@ -190,11 +192,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
             const SizedBox(height: 10),
-            CollectionsCardWidget(
-            title: 'Unnati',
-            id: '3496817092',
-            amount: 1024,
-          ),
+              // CollectionCardWidget(
+              //   title: 'Unnati',
+              //   id: '3496817092',
+              //   amount: 1024,
+              //   status: 'Completed',
+              //   overdueAmount: 0,
+              //   emiAmount: 1024,
+              //   tenure: 36,
+              //   collectionDay: 'Thursday',
+              //   rejectReason: 'Lorem Ipsum',
+              // ),
             const SizedBox(height: 10),
             const Text(
               'Eligible Loan',

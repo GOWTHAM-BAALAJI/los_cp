@@ -205,7 +205,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   horizontal: 60),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey.shade400,
+                  backgroundColor: Color(0xffff9021),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

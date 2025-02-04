@@ -82,14 +82,16 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.search, color: Colors.white),
+                  icon: const Icon(Icons.notifications_outlined, color: Colors.white),
                   onPressed: () {},
                   padding: EdgeInsets.zero, // Reduce padding around icon
                   constraints: const BoxConstraints(minHeight: 36, minWidth: 36),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                  onPressed: () {},
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/');
+                  },
                   padding: EdgeInsets.zero, // Reduce padding around icon
                   constraints: const BoxConstraints(minHeight: 36, minWidth: 36),
                 ),

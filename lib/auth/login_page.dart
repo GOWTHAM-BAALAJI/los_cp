@@ -19,7 +19,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+      return false;
+    },
+      child: Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
           double keyboardHeight = MediaQuery
@@ -295,6 +299,6 @@ class _LoginPageState extends State<LoginPage> {
           );
         },
       ),
-    );
+    ));
   }
 }
