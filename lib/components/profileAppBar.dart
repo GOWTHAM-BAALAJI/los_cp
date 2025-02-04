@@ -4,14 +4,12 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
   final String id;
   final String location;
-  final String profileImageUrl;
 
   const ProfileAppBar({
     Key? key,
     required this.name,
     required this.id,
     required this.location,
-    required this.profileImageUrl,
   }) : super(key: key);
 
   @override
@@ -27,13 +25,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       child: Row(
         children: [
-          // Profile Image
-          CircleAvatar(
-            radius: 25,
-            backgroundImage: NetworkImage(profileImageUrl),
-          ),
           const SizedBox(width: 12),
-
           // Name and Details
           Expanded(
             child: Column(

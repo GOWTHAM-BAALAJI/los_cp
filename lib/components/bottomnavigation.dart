@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import './dashboard.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
+  final String userName = 'Anika!';
   const CustomBottomNavBar({
     Key? key,
     required this.selectedIndex,
@@ -13,10 +15,10 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
-      const Center(child: Text('Spandana')),
-      const Center(child: Text('Lists')),
-      const Center(child: Text('Sync')),
-      const Center(child: Text('More')),
+      DashboardScreen(userName: userName),
+      const Center(child: Text('My Portfolio')),
+      const Center(child: Text('Transaction')),
+      const Center(child: Text('Profile')),
     ];
 
     return Column(
@@ -71,16 +73,16 @@ class CustomBottomNavBar extends StatelessWidget {
                       label: 'Spandana',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.list),
-                      label: 'List',
+                      icon: Icon(Icons.more_vert),
+                      label: 'My Portfolio',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.sync),
-                      label: 'Sync',
+                      icon: Icon(Icons.account_balance_wallet),
+                      label: 'Transactions',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.playlist_add_rounded),
-                      label: 'More',
+                      icon: Icon(Icons.account_circle_outlined),
+                      label: 'Profile',
                     ),
                   ],
                 ),

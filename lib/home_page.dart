@@ -23,8 +23,7 @@ class _HomePageState extends State<HomePage> {
       appBar: ProfileAppBar(
         name: 'Rohit Thiru',
         id: '94556387',
-        location: 'Jhalod',
-        profileImageUrl: 'https://example.com/profile-image.jpg', // Replace with your actual image URL
+        location: 'Jhalod', // Replace with your actual image URL
       ),
       body: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
