@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../home_page.dart'; // Import HomePage
 import 'forgot_password_page.dart';
+import 'sign_up.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -15,15 +16,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   bool _rememberMe = false;
 
-  void _login() {
-    print("User ID: ${_userIdController.text}");
-    print("Password: ${_passwordController.text}");
-  }
-
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final keyboardHeight = mediaQuery.viewInsets.bottom;
 
     return Scaffold(
       body: LayoutBuilder(
@@ -34,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
               .bottom;
           double containerHeight = keyboardHeight > 0
               ? constraints.maxHeight *
-              0.3 // Reduce height when keyboard is open
+              0.3
               : constraints.maxHeight * 0.4;
 
           return Stack(
@@ -257,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
                                   horizontal: 60),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey.shade400,
+                                  backgroundColor: Color(0xffff9021),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -274,6 +268,22 @@ class _LoginPageState extends State<LoginPage> {
                                     height: 16.8 / 14)),
                               ),
                             ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (
+                                        _) => const SignUpPage()),
+                                  );
+                                }
+                                , child: const Text(
+                              "Don't have an account? Sign up.",
+                              style: TextStyle(
+                                color: Color(0xFF2051E5),
+                                fontSize: 10,
+                                height: 12 / 10,
+                              ),
+                            ))
                           ],
                         ),
                       ),
