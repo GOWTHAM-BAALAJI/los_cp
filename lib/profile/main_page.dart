@@ -125,6 +125,50 @@ class ProfilePageState extends State<ProfilePage> {
     ),
   ];
 
+  void updateTabs() {
+    setState(() {
+      tabs1 = [
+        TabItem1(
+          title: 'Loans',
+          content: TabComponent2(tabs2: tabs2_loans),
+        ),
+        TabItem1(
+          title: 'Transactions',
+          content: TabComponent2(tabs2: tabs2_transactions),
+        ),
+        TabItem1(
+          title: 'Comments',
+          content: Center(child: Text('Comments Content')),
+        ),
+        TabItem1(
+          title: 'Digital Loan Card',
+          content: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : responseData == null
+              ? const Center(child: Text('No data available'))
+              : InfoCard(
+            key: ValueKey(responseData.hashCode),
+            name: responseData!["customerDetails"][0]["CustomerName"]?.toString() ?? '',
+            id: responseData!["customerDetails"][0]["CustomerId"]?.toString() ?? '',
+            phone: responseData!["customerDetails"][0]["MobileNo"]?.toString() ?? '',
+            guardian: responseData!["customerDetails"][0]["FatherSpouseName"]?.toString() ?? '',
+            insuranceCoveredFor: "${responseData!["customerDetails"][0]["CustomerName"] ?? ''} & ${responseData!["customerDetails"][0]["FatherSpouseName"] ?? ''}",
+            accidentalApplicant: responseData!["customerDetails"][0]["NomineeName"]?.toString() ?? '',
+            accidentalPremium: responseData!["loanDetails"][0]["insurancePremium"]?.toString() ?? '',
+            disbursementDate: responseData!["loanDetails"].last["disbursementDate"]?.toString() ?? '',
+            interestRate: responseData!["loanDetails"][0]["roi"]?.toString() ?? '',
+            lpf: responseData!["loanDetails"][0]["processingFee"]?.toString() ?? '',
+            loanRepayment: responseData!["loanDetails"][0]["paymentFrequency"]?.toString() ?? '',
+            center: responseData!["customerDetails"][0]["CenterName"]?.toString() ?? '',
+            group: responseData!["customerDetails"][0]["GroupName"]?.toString() ?? '',
+            insurancePremium: responseData!["loanDetails"][0]["insurancePremium"]?.toString() ?? '',
+            loanAmount: totalDisbursedAmount.toStringAsFixed(2),
+          ),
+        ),
+      ];
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -177,44 +221,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       TabItem1(
         title: 'Digital Loan Card',
-        content: responseData == null
-            ? InfoCard(
-                key: ValueKey("loading"),
-                name: "Loading",
-                id: "Loading",
-                phone: "Loading",
-                guardian: "Loading",
-                insuranceCoveredFor: "Loading",
-                accidentalApplicant: "Loading",
-                accidentalPremium: "Loading",
-                disbursementDate: "Loading",
-                interestRate: "Loading",
-                lpf: "Loading",
-                loanRepayment: "Loading",
-                center: "Loading",
-                group: "Loading",
-                insurancePremium: "Loading",
-                loanAmount: "Loading",
-              )
-            : InfoCard(
-                key: ValueKey(responseData),
-                name: responseData!["customerDetails"][0]["CustomerName"],
-                id: responseData!["customerDetails"][0]["CustomerId"].toString(),
-                phone: responseData!["customerDetails"][0]["MobileNo"],
-                guardian: responseData!["customerDetails"][0]["FatherSpouseName"],
-                insuranceCoveredFor:
-                "${responseData!["customerDetails"][0]["CustomerName"]} & ${responseData!["customerDetails"][0]["FatherSpouseName"]}",
-                accidentalApplicant: responseData!["customerDetails"][0]["NomineeName"],
-                accidentalPremium: responseData!["loanDetails"][0]["insurancePremium"],
-                disbursementDate: responseData!["loanDetails"].last["disbursementDate"],
-                interestRate: responseData!["loanDetails"][0]["roi"],
-                lpf: responseData!["loanDetails"][0]["processingFee"],
-                loanRepayment: responseData!["loanDetails"][0]["paymentFrequency"],
-                center: responseData!["customerDetails"][0]["CenterName"],
-                group: responseData!["customerDetails"][0]["GroupName"],
-                insurancePremium: responseData!["loanDetails"][0]["insurancePremium"],
-                loanAmount: totalDisbursedAmount.toString(),
-            ),
+        content: const Center(child: Text('Loading...')),
       ),
     ];
   }
@@ -222,10 +229,15 @@ class ProfilePageState extends State<ProfilePage> {
   double totalDisbursedAmount = 0.0;
 
   Future<void> fetchProfileData() async {
+    setState(() {
+      isLoading = true;
+    });
+
     final url = 'https://apiuat.spandanasphoorty.com/crm/api/getdetails';
     final bodyData = json.encode({
       'customerId': 3002,
     });
+
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -240,24 +252,27 @@ class ProfilePageState extends State<ProfilePage> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         print("Response Data -------------- $data");
+
         if (data['loanDetails'] != null) {
-          totalDisbursedAmount = 0.0; // Reset the amount
+          totalDisbursedAmount = 0.0;
           for (var loan in data['loanDetails']) {
-            // Assuming disbursedAmount is present in the response, change key if needed
             totalDisbursedAmount += loan['disbursedAmount'] ?? 0.0;
           }
         }
+
         setState(() {
           responseData = data;
-        });
-        setState(() {
           isLoading = false;
         });
+        updateTabs();
       } else {
         throw Exception('Failed to load profile');
       }
     } catch (e) {
       print('Error fetching profile data: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
