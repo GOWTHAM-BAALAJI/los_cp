@@ -100,13 +100,13 @@ class ProfileDetailsCardWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-                        EditButton(
-                          onPressed: () {
-                            // Your edit functionality here
-                            print("Edit button pressed!");
-                            // Navigate to edit screen, update data, etc.
-                          },
-                        ),
+                        // EditButton(
+                        //   onPressed: () {
+                        //     // Your edit functionality here
+                        //     print("Edit button pressed!");
+                        //     // Navigate to edit screen, update data, etc.
+                        //   },
+                        // ),
                       ],
                     ),
                   ),

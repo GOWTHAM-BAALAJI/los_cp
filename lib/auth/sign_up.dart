@@ -23,6 +23,7 @@ class _SignUpPageState extends State<SignUpPage> {
       context: context,
       builder: (BuildContext context) {
         return OtpScreen(
+          mobileNumber: _mobileController.text.trim(),
           onOtpVerified: () {
             setState(() {
               _isOtpVerified = true; // Update UI when OTP is verified
@@ -43,7 +44,7 @@ class _SignUpPageState extends State<SignUpPage> {
           double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
           double containerHeight = keyboardHeight > 0
               ? constraints.maxHeight * 0.3
-              : constraints.maxHeight * 0.4;
+              : constraints.maxHeight * 0.5;
 
           return Stack(
             children: [
@@ -103,91 +104,9 @@ class _SignUpPageState extends State<SignUpPage> {
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 20),
-                            Column(
+                            if( !_isOtpVerified) Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'User ID',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            height: 14.4 / 12,
-                                            color: Color(0xFF636363)
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' *', // Asterisk symbol
-                                        style: TextStyle(fontSize: 12,
-                                            color: Colors.red), // Red asterisk
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                SizedBox(
-                                  width: 295,
-                                  height: 40,
-                                  child: Center(
-                                    child: TextField(
-                                      controller: _userIdController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Enter your User ID',
-                                        hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          height: 20 / 12,
-                                        ),
-                                        border: OutlineInputBorder(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Date of Birth',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            height: 14.4 / 12,
-                                            color: Color(0xFF636363)
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' *',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.red),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                SizedBox(
-                                  width: 295,
-                                  height: 40,
-                                  child: Center(
-                                    child: TextField(
-                                      controller: _dobController,
-                                      decoration: InputDecoration(
-                                        hintText: 'DD/MM/YY',
-                                        hintStyle: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          height: 20 / 12,
-                                        ),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
                                 Text.rich(
                                   TextSpan(
                                     children: [
@@ -208,7 +127,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 5),
+                                const SizedBox(height: 10),
                                 SizedBox(
                                   width: 295,
                                   height: 40,
@@ -233,6 +152,88 @@ class _SignUpPageState extends State<SignUpPage> {
                               ],
                             ),
                             if(_isOtpVerified) ...[
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    const TextSpan(
+                                      text: 'User ID',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          height: 14.4 / 12,
+                                          color: Color(0xFF636363)
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' *', // Asterisk symbol
+                                      style: TextStyle(fontSize: 12,
+                                          color: Colors.red), // Red asterisk
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              SizedBox(
+                                width: 295,
+                                height: 40,
+                                child: Center(
+                                  child: TextField(
+                                    controller: _userIdController,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Enter your User ID',
+                                      hintStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        height: 20 / 12,
+                                      ),
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Date of Birth',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          height: 14.4 / 12,
+                                          color: Color(0xFF636363)
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' *',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              SizedBox(
+                                width: 295,
+                                height: 40,
+                                child: Center(
+                                  child: TextField(
+                                    controller: _dobController,
+                                    decoration: InputDecoration(
+                                      hintText: 'DD/MM/YY',
+                                      hintStyle: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        height: 20 / 12,
+                                      ),
+                                      border: const OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
                               Text.rich(
                                 TextSpan(
                                   children: [
@@ -356,7 +357,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       MaterialPageRoute(builder: (context) => HomePage()),
                                     );
                                   },
-                                  child: const Text("Submit", style: TextStyle(
+                                  child: const Text("Register", style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.white,
                                       height: 16.8 / 14)),

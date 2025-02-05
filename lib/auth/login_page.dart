@@ -23,44 +23,73 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
 
-    final String apiUrl = "";
+    final String apiUrl = "http://sandbox.spandanasphoorty.com:8080/api/cp/V1/loginDetails";
+    final String authorization = "c3BhbmRhbmE6U3BhbmRhbmFAMjAyMyM=";
+    String encodedPassword = base64Encode(utf8.encode(_passwordController.text.trim()));
+
+    print("user Id Password");
+    print(_customerIdController.text.trim());
+    print(encodedPassword);
+    if (_customerIdController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Customer Id cannot be empty")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (_passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Password cannot be empty.")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    final data = {
+      "customerId": _customerIdController.text.trim(),
+      "password": encodedPassword,
+    };
 
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
+          "Authorization": "Basic $authorization",
           "Content-Type": "application/json",
-          "Accept": "application/json",
         },
-        body: jsonEncode({
-          "customerId": _customerIdController.text.trim(),
-          "password": _passwordController.text.trim(),
-        }),
+        body: jsonEncode(data),
       );
 
       final responseData = jsonDecode(response.body);
+      print("Response: $responseData");
+      print("Status Code: ${response.statusCode}");
 
-      if (response.statusCode == 200) {
-        await _secureStorage.write(key: "token", value: responseData["token"]);
-        await _secureStorage.write(key: "customerId", value: _customerIdController.text);
+        if (responseData['status']['code'] == '000') {
+          await _secureStorage.write(key: "token", value: responseData["token"]);
+          await _secureStorage.write(key: "customerId", value: _customerIdController.text);
 
-        if (_rememberMe) {
-          await _secureStorage.write(key: "rememberMe", value: "true");
-          String encodedPassword = base64Encode(utf8.encode(_passwordController.text.trim()));
-          await _secureStorage.write(key: "password", value: encodedPassword);
+          if (_rememberMe) {
+            await _secureStorage.write(key: "rememberMe", value: "true");
+            String encodedPassword = base64Encode(utf8.encode(_passwordController.text.trim()));
+            await _secureStorage.write(key: "password", value: encodedPassword);
+          } else {
+            await _secureStorage.delete(key: "rememberMe");
+            await _secureStorage.delete(key: "password");
+          }
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
         } else {
-          await _secureStorage.delete(key: "rememberMe");
-          await _secureStorage.delete(key: "password");
+          _showErrorDialog("Login failed: ${responseData['status']['message']}");
         }
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else {
-        _showErrorDialog("Login failed: ${responseData['message']}");
-      }
     } catch (e) {
+      print("Error: $e");
       _showErrorDialog("An error occurred. Please try again.");
     } finally {
       setState(() {
@@ -68,6 +97,7 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -170,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                               const SizedBox(height: 5),
                               const Text("Log in to your account", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Color(0xFF939598)), textAlign: TextAlign.center),
                               const SizedBox(height: 20),
-                              _buildTextField("User ID", "Enter your User ID", _customerIdController),
+                              _buildTextField("Customer ID", "Enter your User ID", _customerIdController),
                               const SizedBox(height: 20),
                               _buildPasswordField(),
                               _buildRememberMeRow(),

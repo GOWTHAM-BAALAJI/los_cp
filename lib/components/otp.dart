@@ -3,8 +3,14 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'dart:async';
 
 class OtpScreen extends StatefulWidget {
+  final String mobileNumber;
   final VoidCallback onOtpVerified;
-  OtpScreen({required this.onOtpVerified});
+
+  const OtpScreen({
+    Key? key,
+    required this.mobileNumber,
+    required this.onOtpVerified,
+  }) : super(key: key);
   @override
   _OtpScreenState createState() => _OtpScreenState();
 }
@@ -58,6 +64,12 @@ class _OtpScreenState extends State<OtpScreen> {
     }
   }
 
+  String maskMobileNumber(String number) {
+    // if (number.length < 6) return number;
+    return '${number.substring(0, 2)}****${number.substring(number.length - 4)}';
+  }
+
+
   @override
   void dispose() {
     if (mounted) {
@@ -109,7 +121,7 @@ class _OtpScreenState extends State<OtpScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "98****5457",
+                  "${maskMobileNumber(widget.mobileNumber)}",
                   style: TextStyle(
                     fontSize: 12,
                     color: Color(0xFF1E1E1E),

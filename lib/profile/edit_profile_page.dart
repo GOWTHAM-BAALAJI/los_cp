@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'edit_profile_component.dart';
 import '../components/expand_widget.dart';
+import '../components/profileAppBar.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -20,9 +21,30 @@ class EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
+        appBar: ProfileAppBar(
+          name: 'Anika',
+          id: '94556387',
+          location: 'Jhalod', // Replace with your actual image URL
+        ),
         body: SingleChildScrollView(
             child: Column(
                 children: [
+                  Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   ProfileDetailsCardWidget(
                     name: 'Anika Rehman',
                     id: '849557572',
@@ -37,9 +59,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                     motherName: 'Fatima Begum',
                     fatherName: 'Salim Rahman',
                     profileImageUrl: 'assets/images/female_profilepic.png',
-                    onEditPressed: () {
-                      // Handle edit button press
-                    },
                   ),
                   Column(
                     children: [
