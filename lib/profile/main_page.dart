@@ -6,7 +6,6 @@ import 'digital_loan_card.dart';
 import '../components/tab_type_1.dart';
 import '../components/tab_type_2.dart';
 import '../transactions/main_page.dart';
-import '../components/transactions/transactions_history.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -104,7 +103,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       TabItem1(
         title: 'Digital Loan Card',
-        content: const Center(child: Text('Loading...')),
+        content: Center(child: Text('Loading...')),
       ),
     ];
   }
@@ -134,7 +133,6 @@ class ProfilePageState extends State<ProfilePage> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        print("Response Data -------------- $data");
 
         if (data['loanDetails'] != null) {
           totalDisbursedAmount = 0.0;

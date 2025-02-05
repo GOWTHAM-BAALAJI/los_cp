@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../components/edit_button.dart';
 
 class ProfileDetailsCardWidget extends StatelessWidget {
   final String name;
@@ -100,6 +99,11 @@ class ProfileDetailsCardWidget extends StatelessWidget {
                             ],
                           ),
                         ),
+                        // EditButton(
+                        //   onPressed: () {
+                        //     print("Edit button pressed!");
+                        //   },
+                        // ),
                         // EditButton(
                         //   onPressed: () {
                         //     // Your edit functionality here
