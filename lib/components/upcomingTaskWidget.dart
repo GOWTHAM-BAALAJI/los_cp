@@ -42,28 +42,26 @@ class UpcomingTaskWidget extends StatelessWidget {
 
 
 class CollectionCardWidget extends StatefulWidget {
+  final String heading;
   final String title;
   final String id;
-  final num amount;
   final String status;
   final num overdueAmount;
   final num emiAmount;
-  final num tenure;
-  final String collectionDay;
-  final String rejectReason;
+  final String emidate;
+  final String statusLoan;
 
   // Constructor to accept parameters
   const CollectionCardWidget({
     super.key,
+    required this.heading,
     required this.title,
     required this.id,
-    required this.amount,
     required this.status,
     required this.overdueAmount,
     required this.emiAmount,
-    required this.tenure,
-    required this.collectionDay,
-    required this.rejectReason,
+    required this.emidate,
+    required this.statusLoan,
   });
 
   @override
@@ -78,9 +76,6 @@ class _CollectionCardWidgetState extends State<CollectionCardWidget> {
     String LoanStatus = widget.status;
     num overdueAmount = widget.overdueAmount;
     num LoanEMIAmount = widget.emiAmount;
-    num LoanTenure = widget.tenure;
-    String LoanCollectionDay = widget.collectionDay;
-    String LoanRejectReason = widget.rejectReason;
 
     Color statusColor;
 
@@ -94,163 +89,213 @@ class _CollectionCardWidgetState extends State<CollectionCardWidget> {
       statusColor = Colors.grey; // Default color if status is unknown
     }
 
-    return Container(
-      width: double.infinity,
-      height: LoanStatus == "Rejected" ? 167 : 149,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: statusColor,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      children: [
+        widget.heading.isNotEmpty ?
+        Container(
+          width: double.infinity,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
+            border: Border(
+              top: BorderSide(color: statusColor),
+              left: BorderSide(color: statusColor),
+              right: BorderSide(color: statusColor),
+            ),
+          ),
+          child: Padding(
+              padding: EdgeInsets.all(16),
+              child:Text(widget.heading,style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),)
+          )
+        ) : SizedBox.shrink(),
+        Container(
+          width: double.infinity,
+          height: (widget.emidate.isEmpty ? 80
+              : 160),
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: widget.heading.isNotEmpty ? BorderRadius.only(
+              bottomLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8),
+            ): BorderRadius.all(Radius.circular(8)),
+            border: Border.all(
+              color: statusColor,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(0xFFF9FAFB),
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            'assets/images/loanimg.png',
-                            height: 24,
-                            width: 24,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              LoanName,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                height: 16.8 / 14,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Color(0xFFF9FAFB),
+                            ),
+                            child: Center(
+                              child: Image.asset(
+                                'assets/images/loanimg.png',
+                                height: 24,
+                                width: 24,
+                                fit: BoxFit.contain,
                               ),
                             ),
+                          ),
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  LoanName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    height: 16.8 / 14,
+                                  ),
+                                ),
+                                Text(
+                                  LoanNo,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF636363),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  overdueAmount > 0 ?
+                  Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(4),
+                          margin: EdgeInsets.only(top: 4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: statusColor,
+                            ),
+                          ),
+                          child:
+                          Text(
+                            "OD of ${overdueAmount}",
+                            style: TextStyle(
+                              fontSize: 10,
+                              height: 12 / 10,
+                              fontWeight: FontWeight.w700,
+                              color: statusColor,
+                            ),
+                          ),
+                        ),
+                      ]
+                  ) : widget.statusLoan.isNotEmpty ? Row(
+                      children: [
+                        Row(
+                            children: [
+                              Icon(
+                                Icons.pending, color: statusColor, size: 12,),
+                              SizedBox(width: 5,),
+                              Text(
+                                "Pending",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  height: 14 / 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: statusColor,
+                                ),
+                              ),
+                            ]
+                        ),
+                      ]
+                  ) : SizedBox.shrink(),
+                ],
+              ),
+              widget.emidate.isEmpty ? SizedBox.shrink() : SizedBox(height: 13),
+              widget.emidate.isEmpty ? SizedBox.shrink() : Divider(
+                height: 1,
+                color: Colors.grey,
+              ),
+              widget.emidate.isEmpty ? SizedBox.shrink() : SizedBox(height: 13),
+              widget.emidate.isEmpty ? SizedBox.shrink() : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_month),
+                          Text(
+                            widget.emidate,
+                            style: TextStyle(
+                              color: Color(0xFF101828),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xffff9021),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          minimumSize: Size(50, 40),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.currency_rupee,
+                              color: Colors.white,
+                              size: 16,
+                            ),
                             Text(
-                              LoanNo,
+                              "${LoanEMIAmount}",
                               style: TextStyle(
+                                color: Colors.white,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF636363),
                               ),
                             ),
                           ],
                         ),
+
                       ),
                     ],
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(4),
-                    margin: EdgeInsets.only(top: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: statusColor,
-                      ),
-                    ),
-                    child: overdueAmount > 0
-                        ? Text(
-                      "OD of ${overdueAmount}",
-                      style: TextStyle(
-                        fontSize: 10,
-                        height: 12 / 10,
-                        fontWeight: FontWeight.w700,
-                        color: statusColor,
-                      ),
-                    )
-                        : SizedBox.shrink(),
-                  ),
-                ]
-              ),
             ],
           ),
-          SizedBox(height: 16),
-          Divider(
-            height: 1,
-            color: statusColor,
-          ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_month),
-                      Text(
-                        "${LoanEMIAmount}",
-                        style: TextStyle(
-                          color: Color(0xFF101828),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffff9021),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      minimumSize: Size(0,15),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.currency_rupee,
-                          color: Color(0xFF636363),
-                          size: 16,
-                        ),
-                        Text(
-                          "${LoanEMIAmount}",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }

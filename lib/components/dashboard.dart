@@ -192,18 +192,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
             const SizedBox(height: 10),
-              // CollectionCardWidget(
-              //   title: 'Unnati',
-              //   id: '3496817092',
-              //   amount: 1024,
-              //   status: 'Completed',
-              //   overdueAmount: 0,
-              //   emiAmount: 1024,
-              //   tenure: 36,
-              //   collectionDay: 'Thursday',
-              //   rejectReason: 'Lorem Ipsum',
-              // ),
+              CollectionCardWidget(
+                heading: 'Collections',
+                title: 'Unnati',
+                id: '3496817092',
+                status: 'Ongoing',
+                overdueAmount: 1023,
+                emiAmount: 1024,
+                emidate: '04-02-2025',
+                statusLoan: ''
+              ),
             const SizedBox(height: 10),
+            CollectionCardWidget(
+              heading: '',
+              title: 'Chetna',
+              id: '3496817092',
+              status: 'Completed',
+              overdueAmount: 0,
+              emiAmount: 1024,
+              emidate: '04-02-2025',
+              statusLoan: ''
+            ),
+            const SizedBox(height: 10),
+            CollectionCardWidget(
+              heading: 'LUC',
+              title: 'Unnati',
+              id: '3496817092',
+              status: 'Ongoing',
+              overdueAmount: 0,
+              emiAmount: 0,
+              emidate: '',
+              statusLoan: 'Pending'
+            ),
+            const SizedBox(height: 20),
             const Text(
               'Eligible Loan',
               style: TextStyle(
@@ -212,7 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 24/16,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             EligibleLoanCard(
               imagePath: 'assets/images/cd.png',
               title: 'Consumer Durables',

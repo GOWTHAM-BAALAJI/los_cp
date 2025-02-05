@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ProfileAppBar(
-        name: 'Rohit Thiru',
+        name: 'Anika',
         id: '94556387',
         location: 'Jhalod', // Replace with your actual image URL
       ),

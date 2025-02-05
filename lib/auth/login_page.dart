@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../home_page.dart'; // Import HomePage
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../home_page.dart';
 import 'forgot_password_page.dart';
 import 'sign_up.dart';
 
@@ -11,294 +14,254 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _userIdController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String apiUrl = "";
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode({
+          "customerId": _customerIdController.text.trim(),
+          "password": _passwordController.text.trim(),
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        await _secureStorage.write(key: "token", value: responseData["token"]);
+        await _secureStorage.write(key: "customerId", value: _customerIdController.text);
+
+        if (_rememberMe) {
+          await _secureStorage.write(key: "rememberMe", value: "true");
+          String encodedPassword = base64Encode(utf8.encode(_passwordController.text.trim()));
+          await _secureStorage.write(key: "password", value: encodedPassword);
+        } else {
+          await _secureStorage.delete(key: "rememberMe");
+          await _secureStorage.delete(key: "password");
+        }
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        _showErrorDialog("Login failed: ${responseData['message']}");
+      }
+    } catch (e) {
+      _showErrorDialog("An error occurred. Please try again.");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Map<String, String> _storedData = {};
+
+  void initState() {
+    super.initState();
+    readAllValues();
+    _loadCredentials();
+  }
+
+  Future<void> readAllValues() async {
+    Map<String, String> allValues = await _secureStorage.readAll();
+
+    setState(() {
+      _storedData = allValues;
+    });
+  }
+
+  Future<void> _loadCredentials() async {
+    String? savedcustomerId = await _secureStorage.read(key: 'customerId');
+    String? savedPassword = await _secureStorage.read(key: 'password');
+    String? rememberMeFlag = await _secureStorage.read(key: 'rememberMe');
+
+    if (rememberMeFlag == 'true' && savedcustomerId != null && savedPassword != null) {
+      setState(() {
+        _customerIdController.text = savedcustomerId;
+        _passwordController.text = utf8.decode(base64Decode(savedPassword));
+        _rememberMe = true;
+      });
+    }
+  }
+
+  final _customerIdController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
-        onWillPop: () async {
-      return false;
-    },
+      onWillPop: () async => false,
       child: Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          double keyboardHeight = MediaQuery
-              .of(context)
-              .viewInsets
-              .bottom;
-          double containerHeight = keyboardHeight > 0
-              ? constraints.maxHeight *
-              0.3
-              : constraints.maxHeight * 0.4;
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+            double containerHeight = keyboardHeight > 0 ? constraints.maxHeight * 0.3 : constraints.maxHeight * 0.4;
 
-          return Stack(
-            children: [
-              Container(
-                height: containerHeight,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade800, // Background color
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
+            return Stack(
+              children: [
+                Container(
+                  height: containerHeight,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade800,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                 ),
-              ),
-              Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 30),
-                      Image.asset(
-                        'assets/images/logo.png',
-                        height: 40,
-                      ),
-                      const Text(
-                        'Spandana',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
+                Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 30),
+                        Image.asset('assets/images/logo.png', height: 40),
+                        const Text(
+                          'Spandana',
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 10,
-                              spreadRadius: 2,
-                            ),
-                          ],
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 2)],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Text("Welcome back.", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: Color(0xFF090A0A)), textAlign: TextAlign.center),
+                              const SizedBox(height: 5),
+                              const Text("Log in to your account", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Color(0xFF939598)), textAlign: TextAlign.center),
+                              const SizedBox(height: 20),
+                              _buildTextField("User ID", "Enter your User ID", _customerIdController),
+                              const SizedBox(height: 20),
+                              _buildPasswordField(),
+                              _buildRememberMeRow(),
+                              const SizedBox(height: 10),
+                              _buildLoginButton(),
+                              _buildSignUpLink(),
+                            ],
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const Text(
-                              "Welcome back.",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF090A0A),
-                                height: 36 / 24,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 5),
-                            const Text(
-                              "Log in to your account",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF939598),
-                                height: 24 / 14,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'User ID',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            height: 14.4 / 12,
-                                            color: Color(0xFF636363)
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' *', // Asterisk symbol
-                                        style: TextStyle(fontSize: 12,
-                                            color: Colors.red), // Red asterisk
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                SizedBox(
-                                  width: 295,
-                                  height: 40,
-                                  child: Center(
-                                    child: TextField(
-                                      controller: _userIdController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Enter your User ID',
-                                        hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          height: 20 / 12,
-                                        ),
-                                        border: OutlineInputBorder(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Password',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            height: 14.4 / 12,
-                                            color: Color(0xFF636363)
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' *',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.red),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                SizedBox(
-                                  width: 295,
-                                  height: 40,
-                                  child: Center(
-                                    child: TextField(
-                                      controller: _passwordController,
-                                      obscureText: _obscurePassword,
-                                      decoration: InputDecoration(
-                                        hintText: 'Enter your password',
-                                        hintStyle: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          height: 20 / 12,
-                                        ),
-                                        border: const OutlineInputBorder(),
-                                        suffixIcon: IconButton(
-                                          icon: Icon(
-                                            _obscurePassword ? Icons
-                                                .visibility_off : Icons
-                                                .visibility,
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              _obscurePassword =
-                                              !_obscurePassword;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: Checkbox(
-                                    value: _rememberMe,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        _rememberMe = value ?? false;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Remember Me?",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF1E1E1E),
-                                    height: 12 / 10,
-                                  ),
-                                ),
-                                const Spacer(),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (
-                                          _) => const ForgotPasswordPage()),
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Forgot Password?",
-                                    style: TextStyle(
-                                      color: Color(0xFF2051E5),
-                                      fontSize: 10,
-                                      height: 12 / 10,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 60),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xffff9021),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => HomePage()),
-                                  );
-                                },
-                                child: const Text("Login", style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                    height: 16.8 / 14)),
-                              ),
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (
-                                        _) => const SignUpPage()),
-                                  );
-                                }
-                                , child: const Text(
-                              "Don't have an account? Sign up.",
-                              style: TextStyle(
-                                color: Color(0xFF2051E5),
-                                fontSize: 10,
-                                height: 12 / 10,
-                              ),
-                            ))
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
-    ));
+    );
+  }
+
+  Widget _buildTextField(String label, String hint, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text.rich(
+          TextSpan(children: [TextSpan(text: '$label ', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF636363))), const TextSpan(text: '*', style: TextStyle(fontSize: 12, color: Colors.red))]),
+        ),
+        const SizedBox(height: 5),
+        TextField(controller: controller, decoration: InputDecoration(hintText: hint, border: const OutlineInputBorder())),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text.rich(
+          TextSpan(children: [const TextSpan(text: 'Password ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF636363))), const TextSpan(text: '*', style: TextStyle(fontSize: 12, color: Colors.red))]),
+        ),
+        const SizedBox(height: 5),
+        TextField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          decoration: InputDecoration(
+            hintText: 'Enter your password',
+            border: const OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRememberMeRow() {
+    return Row(
+      children: [
+        Checkbox(value: _rememberMe, onChanged: (bool? value) => setState(() => _rememberMe = value ?? false)),
+        const Text("Remember Me?", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF1E1E1E))),
+        const Spacer(),
+        TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordPage())), child: const Text("Forgot Password?", style: TextStyle(color: Color(0xFF2051E5), fontSize: 10))),
+      ],
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: 60),
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _login,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange,
+          disabledBackgroundColor: Colors.grey,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: _isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Text("Login", style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+
+  Widget _buildSignUpLink() {
+    return TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SignUpPage())), child: const Text("Don't have an account? Sign up.", style: TextStyle(color: Color(0xFF2051E5), fontSize: 10)));
   }
 }
