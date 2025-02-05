@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'login_page.dart';
+import 'widgets/custom_textfield.dart';
+import 'widgets/login_header.dart';
+import 'widgets/auth_button.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -15,6 +18,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -117,7 +121,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           double containerHeight = keyboardHeight > 0
-              ? constraints.maxHeight * 0.3 // Reduce height when keyboard is open
+              ? constraints.maxHeight * 0.3
               : constraints.maxHeight * 0.4;
 
           return Stack(
@@ -126,7 +130,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 height: containerHeight,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade800, // Background color
+                  color: Colors.blue.shade800,
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),
@@ -167,43 +171,46 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Text(
-                              "Forgot Password",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF090A0A),
-                                height: 36 / 24,
-                              ),
-                              textAlign: TextAlign.center,
+                            LoginHeader(
+                              title: "Forgot Password",
+                              subtitle: "Reset your account password",
                             ),
                             const SizedBox(height: 20),
-                            _buildTextField("Customer ID", "Enter your User ID", _customerIdController),
+                            CustomTextField(
+                              label: "Customer ID",
+                              hint: "Enter your User ID",
+                              controller: _customerIdController,
+                              isRequired: true,
+                            ),
                             const SizedBox(height: 20),
-                            _buildPasswordField(),
+                            CustomTextField(
+                              label: "New Password",
+                              hint: "Enter your new password",
+                              controller: _passwordController,
+                              isRequired: true,
+                              isPassword: true,
+                              obscureText: _obscurePassword,
+                              onPasswordToggle: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
                             const SizedBox(height: 30),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 60),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orange,
-                                  disabledBackgroundColor: Colors.grey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                onPressed: _resetPassword,
-                                child: const Text(
-                                  "Save",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                            AuthButton(
+                              text: "Save",
+                              onPressed: _resetPassword,
+                              isLoading: _isLoading,
                             ),
-                            TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginPage())), child: const Text("Back to Login", style: TextStyle(color: Color(0xFF2051E5), fontSize: 10)))
+                            TextButton(
+                                onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const LoginPage())
+                                ),
+                                child: const Text(
+                                    "Back to Login",
+                                    style: TextStyle(
+                                        color: Color(0xFF2051E5),
+                                        fontSize: 10
+                                    )
+                                )
+                            )
                           ],
                         ),
                       ),
@@ -215,42 +222,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           );
         },
       ),
-    );
-  }
-  Widget _buildTextField(String label, String hint, TextEditingController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text.rich(
-          TextSpan(children: [TextSpan(text: '$label ', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF636363))), const TextSpan(text: '*', style: TextStyle(fontSize: 12, color: Colors.red))]),
-        ),
-        const SizedBox(height: 5),
-        TextField(controller: controller, decoration: InputDecoration(hintText: hint, border: const OutlineInputBorder())),
-      ],
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text.rich(
-          TextSpan(children: [const TextSpan(text: 'Password ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF636363))), const TextSpan(text: '*', style: TextStyle(fontSize: 12, color: Colors.red))]),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: _passwordController,
-          obscureText: _obscurePassword,
-          decoration: InputDecoration(
-            hintText: 'Enter your new password',
-            border: const OutlineInputBorder(),
-            suffixIcon: IconButton(
-              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

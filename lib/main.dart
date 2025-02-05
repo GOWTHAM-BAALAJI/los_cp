@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'auth/login_page.dart';
 import 'package:flutter/services.dart';
-import './home_page.dart';
 import './theme.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'home_page.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((value) => runApp(MyApp()));
+  ]);
+  const FlutterSecureStorage storage = FlutterSecureStorage();
+  String? isLogoutClicked = await storage.read(key: 'isLogoutClicked');
+
+  runApp(MyApp(isLoggedOut: isLogoutClicked == 'true'));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool isLoggedOut;
+
+  const MyApp({Key? key, required this.isLoggedOut}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +28,7 @@ class MyApp extends StatelessWidget {
       title: 'LOS',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginPage(),
-        // '/home': (context) => HomePage(),
-      },
+      home: isLoggedOut ? const LoginPage() : HomePage(),
     );
   }
 }
