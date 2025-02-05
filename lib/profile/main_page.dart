@@ -5,6 +5,7 @@ import 'user_details.dart';
 import 'digital_loan_card.dart';
 import '../components/tab_type_1.dart';
 import '../components/tab_type_2.dart';
+import '../transactions/main_page.dart';
 import '../components/transactions/transactions_history.dart';
 
 void main() {
@@ -12,22 +13,6 @@ void main() {
     debugShowCheckedModeBanner: false,
     home: ProfilePage(),
   ));
-}
-
-class Transaction {
-  final String title;
-  final String username;
-  final double amount;
-  final String date;
-  final int status;
-
-  Transaction({
-    required this.title,
-    required this.username,
-    required this.amount,
-    required this.date,
-    required this.status,
-  });
 }
 
 class ProfilePage extends StatefulWidget {
@@ -40,79 +25,6 @@ class ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
   Map<String, dynamic>? responseData;
   late List<TabItem1> tabs1;
-  late List<TabItem2> tabs2_transactions;
-  final List<Transaction> transactions = [
-    Transaction(
-      title: 'Regular + OD collection',
-      username: 'Rohit Thiru',
-      amount: 3072,
-      date: '30th Apr',
-      status: 1,
-    ),
-    Transaction(
-      title: 'Regular + OD collection',
-      username: 'Rohit Thiru',
-      amount: 3072,
-      date: '30th Apr',
-      status: 2,
-    ),
-    Transaction(
-      title: 'Loan Payment',
-      username: 'John Doe',
-      amount: 5000,
-      date: '1st May',
-      status: 1,
-    ),
-    Transaction(
-      title: 'Salary Deposit',
-      username: 'Jane Smith',
-      amount: 15000,
-      date: '5th May',
-      status: 0,
-    ),
-    Transaction(
-      title: 'Regular + OD collection',
-      username: 'Rohit Thiru',
-      amount: 3072,
-      date: '30th Apr',
-      status: 1,
-    ),
-    Transaction(
-      title: 'Loan Payment',
-      username: 'John Doe',
-      amount: 5000,
-      date: '1st May',
-      status: 1,
-    ),
-    Transaction(
-      title: 'Salary Deposit',
-      username: 'Jane Smith',
-      amount: 15000,
-      date: '5th May',
-      status: 0,
-    ),
-    Transaction(
-      title: 'Regular + OD collection',
-      username: 'Rohit Thiru',
-      amount: 3072,
-      date: '30th Apr',
-      status: 1,
-    ),
-    Transaction(
-      title: 'Loan Payment',
-      username: 'John Doe',
-      amount: 5000,
-      date: '1st May',
-      status: 1,
-    ),
-    Transaction(
-      title: 'Salary Deposit',
-      username: 'Jane Smith',
-      amount: 15000,
-      date: '5th May',
-      status: 0,
-    ),
-  ];
 
   final tabs2_loans = [
     TabItem2(
@@ -134,7 +46,7 @@ class ProfilePageState extends State<ProfilePage> {
         ),
         TabItem1(
           title: 'Transactions',
-          content: TabComponent2(tabs2: tabs2_transactions),
+          content: TransactionsPage(),
         ),
         TabItem1(
           title: 'Comments',
@@ -177,35 +89,6 @@ class ProfilePageState extends State<ProfilePage> {
     });
     fetchProfileData();
 
-    tabs2_transactions = [
-      TabItem2(
-        title: 'April',
-        content: Center(child: Text('Current & Eligible Content')),
-      ),
-      TabItem2(
-        title: 'May',
-        content: Container(
-          margin: EdgeInsets.zero,
-          height: 600,
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
-              return TransactionItemWidget(
-                title: transaction.title,
-                username: transaction.username,
-                amount: transaction.amount,
-                date: transaction.date,
-                status: transaction.status,
-              );
-            },
-          ),
-        ),
-      ),
-    ];
-
     tabs1 = [
       TabItem1(
         title: 'Loans',
@@ -213,7 +96,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       TabItem1(
         title: 'Transactions',
-        content: TabComponent2(tabs2: tabs2_transactions),
+        content: TransactionsPage(),
       ),
       TabItem1(
         title: 'Comments',

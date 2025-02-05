@@ -1,5 +1,5 @@
-// profile_detail_item.dart
 import 'package:flutter/material.dart';
+import 'edit_profile_page.dart';
 
 class ProfileDetailItem extends StatelessWidget {
   final String label;
@@ -166,10 +166,20 @@ class ProfileDetailsCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const Icon(
-                          Icons.chevron_right,
-                          color: Color(0xFFD97700),
-                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Navigate to the next page when the icon is tapped
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => EditProfilePage()),
+                            );
+                          },
+                          child: const Icon(
+                            Icons.chevron_right,
+                            color: Color(0xFFD97700),
+                            size: 30, // You can adjust the size if needed
+                          ),
+                        )
                       ],
                     ),
                   ],
