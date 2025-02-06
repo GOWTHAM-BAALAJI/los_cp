@@ -75,6 +75,7 @@ flutter:
     - assets/images/Ongoingimg.png
     - assets/images/Rejectedimg.png
     - assets/images/Completedimg.png
+    - assets/images/Activeimg.png
     - assets/images/cd.png
     - assets/images/banner1.png
     - assets/images/banner2.png

@@ -41,6 +41,25 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // String _calculateNextPaymentDate(String frequency, DateTime lastPaidDate) {
+  //   DateTime nextPaymentDate = lastPaidDate;
+  //
+  //   switch (frequency.toLowerCase()) {
+  //     case 'weekly':
+  //       nextPaymentDate = nextPaymentDate.add(Duration(weeks: 1));
+  //       break;
+  //     case 'biweekly':
+  //       nextPaymentDate = nextPaymentDate.add(Duration(weeks: 2));
+  //       break;
+  //     case 'monthly':
+  //       nextPaymentDate = DateTime(nextPaymentDate.year, nextPaymentDate.month + 1, nextPaymentDate.day);
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  //   return "${nextPaymentDate.day}-${nextPaymentDate.month}-${nextPaymentDate.year}";
+  // }
+
   void updateTabs() {
     final tabs2_loans = [
       TabItem2(
@@ -62,15 +81,23 @@ class ProfilePageState extends State<ProfilePage> {
                 return Center(child: Text('No active loans'));
               } else {
                 final loan = activeLoans[index];
+                // final lastPaidDate = DateTime.parse(loan['lastPaidDate'] ?? DateTime.now().toString());
+                // final frequency = loan['paymentFrequency'] ?? 'monthly';
+                // final nextPaymentDate = _calculateNextPaymentDate(frequency, lastPaidDate);
                 return LoanDetailCard(
-                  LoanName: loan['productName'] ?? '',
-                  LoanNo: loan['loanDisplayId'].toString(),
-                  LoanStatus: loan['loanStatus'] ?? '',
-                  LoanOverdueAmount: loan['overdueAmount']?.toDouble() ?? 0.0,
-                  LoanEMIAmount: loan['emiAmount']?.toDouble() ?? 0.0,
-                  LoanTenure: loan['noOfInstallments'] ?? 0,
-                  LoanCollectionDay: _getCollectionDay(loan['paymentFrequency'] ?? ''),
-                  LoanRejectReason: '',
+                  LoanName: loan.containsKey('productName') ? loan['productName'] : 'Unknown',
+                  LoanNo: loan.containsKey('loanDisplayId') ? loan['loanDisplayId'].toString() : 'N/A',
+                  LoanStatus: loan.containsKey('loanStatus') ? loan['loanStatus'] : 'Unknown',
+                  LoanOverdueAmount: (loan.containsKey('overdueAmount') && loan['overdueAmount'] != null)
+                      ? (loan['overdueAmount'] as num).toDouble()
+                      : 0.0,
+                  LoanEMIAmount: (loan.containsKey('emiAmount') && loan['emiAmount'] != null)
+                      ? (loan['emiAmount'] as num).toDouble()
+                      : 0.0,
+                  LoanTenure: loan.containsKey('noOfInstallments') ? loan['noOfInstallments'] : 0,
+                  LoanCollectionDay: _getCollectionDay(loan.containsKey('paymentFrequency') ? loan['paymentFrequency'] : ''),
+                  LoanRejectReason: "Lorem Ipsum",
+                  // NextPaymentDate: nextPaymentDate,
                 );
               }
             },

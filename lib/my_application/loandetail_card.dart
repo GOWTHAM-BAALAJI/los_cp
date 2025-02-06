@@ -40,7 +40,7 @@ class _LoanDetailCardState extends State<LoanDetailCard> {
 
     Color statusColor;
 
-    if (loanStatus == "Ongoing") {
+    if (loanStatus == "Ongoing" || loanStatus == "Active") {
       statusColor = Color(0xFFD97700);
     } else if (loanStatus == "Completed") {
       statusColor = Color(0xFF3F7D20);
