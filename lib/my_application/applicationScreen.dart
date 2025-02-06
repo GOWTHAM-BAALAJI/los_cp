@@ -7,14 +7,15 @@ import '../components/tab_type_1.dart';
 import './searchBar.dart';
 
 import '../components/goback_button.dart';
-void main() {
-  runApp(MaterialApp(
-    home: applicationScreen(),
-  ));
-}
+// void main() {
+//   runApp(MaterialApp(
+//     home: applicationScreen(),
+//   ));
+// }
 
 class applicationScreen extends StatefulWidget {
-  const applicationScreen({super.key});
+  final Function(int) onNavigate;
+  const applicationScreen({Key? key, required this.onNavigate}) : super(key: key);
 
   @override
   State<applicationScreen> createState() => _applicationScreenState();
@@ -130,7 +131,7 @@ class _applicationScreenState extends State<applicationScreen> {
         child:       Container(
           child: Column(
             children: [
-              GoBack(title: "Portfolio"),
+              GoBack(title: "Portfolio", onNavigate: widget.onNavigate),
               Row(
                 children: [
                   TabComponent1(tabs1: tabs1),

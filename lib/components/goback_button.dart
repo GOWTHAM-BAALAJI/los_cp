@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class GoBack extends StatelessWidget {
   final String title;
+  final Function(int) onNavigate;
 
-  const GoBack({Key? key, required this.title}) : super(key: key);
+  const GoBack({Key? key, required this.title, required this.onNavigate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +16,8 @@ class GoBack extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pop(context); // Pop the current screen when tapped
-            },
+              onNavigate(0);
+              },
             child: Icon(Icons.arrow_back),
           ),
           SizedBox(width: 8),
