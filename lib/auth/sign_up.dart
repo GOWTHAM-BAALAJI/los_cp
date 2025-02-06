@@ -132,12 +132,63 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  void _verifyNumber() async {
+    if (_mobileController.text.trim().length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter a valid 10-digit mobile number")),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String apiUrl = "http://sandbox.spandanasphoorty.com:8080/api/cp/V1/generateOtp";
+    final String authorization = "c3BhbmRhbmE6U3BhbmRhbmFAMjAyMyM=";
+
+    final data = {
+      "loanReferenceID": 347297497,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Authorization": "Basic $authorization",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(data),
+      );
+
+      final responseData = jsonDecode(response.body);
+      print("Response: $responseData");
+      print("Status Code: ${response.statusCode}");
+
+      if (responseData['status']['code'] == '000') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("OTP Sent successfully")),
+        );
+        showOtpModal();
+      } else {
+        _showErrorDialog("Verification failed: ${responseData['status']['message']}");
+      }
+    } catch (e) {
+      print("Error: $e");
+      _showErrorDialog("An error occurred. Please try again.");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   void showOtpModal() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return OtpScreen(
-          mobileNumber: _mobileController.text.trim(),
+          loanReferenceID: _mobileController.text.trim(),
           onOtpVerified: () {
             setState(() {
               _isOtpVerified = true;
@@ -221,7 +272,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               const SizedBox(height: 20),
                               AuthButton(
                                 text: "Verify Number",
-                                onPressed: showOtpModal,
+                                onPressed: _verifyNumber,
                                 backgroundColor: Color(0xffff9021),
                               ),
                             ] else ...[

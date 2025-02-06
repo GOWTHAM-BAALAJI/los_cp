@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class OtpScreen extends StatefulWidget {
-  final String mobileNumber;
+  final String loanReferenceID;
   final VoidCallback onOtpVerified;
 
   const OtpScreen({
     Key? key,
-    required this.mobileNumber,
+    required this.loanReferenceID,
     required this.onOtpVerified,
   }) : super(key: key);
   @override
@@ -20,6 +22,7 @@ class _OtpScreenState extends State<OtpScreen> {
   int _timerSeconds = 80;
   late Timer _timer;
   bool _isResendEnabled = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -54,18 +57,57 @@ class _OtpScreenState extends State<OtpScreen> {
     _startTimer();
   }
 
-  void _verifyOtp() {
-    if (otpController.text == "1234") {
-      widget.onOtpVerified();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Invalid OTP, please try again")),
+
+
+  void _verifyOtp() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String apiUrl = "http://sandbox.spandanasphoorty.com:8080/api/cp/V1/verifyOtp";  // Update with your actual API URL
+    final String authorization = "c3BhbmRhbmE6U3BhbmRhbmFAMjAyMyM=";
+
+    final data = {
+      "loan_id": 347297497,
+      "otpPin": otpController.text.trim(),
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Authorization": "Basic $authorization",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(data),
       );
+
+      final responseData = jsonDecode(response.body);
+      print("Response: $responseData");
+      print("Status Code: ${response.statusCode}");
+
+
+      if (responseData['resObject']['ResponseCode'] == '001' || responseData['resObject']['ResponseCode'] == '000') {
+        widget.onOtpVerified();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid OTP, please try again")),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred. Please try again.")),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
+
   String maskMobileNumber(String number) {
-    // if (number.length < 6) return number;
     return '${number.substring(0, 2)}****${number.substring(number.length - 4)}';
   }
 
@@ -87,7 +129,6 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Dismiss the keyboard when tapping outside of the OTP screen
         FocusScope.of(context).unfocus();
       },
       child: AlertDialog(
@@ -121,7 +162,7 @@ class _OtpScreenState extends State<OtpScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "${maskMobileNumber(widget.mobileNumber)}",
+                  "${maskMobileNumber(widget.loanReferenceID)}",
                   style: TextStyle(
                     fontSize: 12,
                     color: Color(0xFF1E1E1E),
