@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "252781214526",
+    "project_id": "los-cp",
+    "storage_bucket": "los-cp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252781214526:android:d7b3bccc6858a21f4c0a6f",
+        "android_client_info": {
+          "package_name": "com.ssfl.los.los_cp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPl1V68wvoHVMiKkRBPb7MYs_Sli11ycM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

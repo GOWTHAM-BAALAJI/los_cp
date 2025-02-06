@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import './theme.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'home_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'OTPLoginScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +18,7 @@ void main() async {
   ]);
   const FlutterSecureStorage storage = FlutterSecureStorage();
   String? isLogoutClicked = await storage.read(key: 'isLogoutClicked');
-
+  await Firebase.initializeApp();
   runApp(MyApp(isLoggedOut: isLogoutClicked == 'true'));
 }
 
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
       home: isLoggedOut ? const LoginPage() : HomePage(),
+      //home: OTPLoginScreen()
     );
   }
 }

@@ -235,13 +235,3 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 }
-
-// Call this function to show the OTP modal
-// void showOtpModal(BuildContext context) {
-//   showDialog(
-//     context: context,
-//     builder: (BuildContext context) {
-//       return OtpScreen();
-//     },
-//   );
-// }

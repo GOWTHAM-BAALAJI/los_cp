@@ -73,6 +73,25 @@ class _SignUpPageState extends State<SignUpPage> {
       });
       return;
     }
+    if (_confirmPasswordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Confirm Password cannot be empty.")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (_confirmPasswordController != _passwordController) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Password and Confirm Password does not match")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
 
     final data = {
       "customerId": _customerIdController.text.trim(),

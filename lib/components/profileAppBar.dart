@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:los_cp/auth/login_page.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
@@ -93,7 +94,10 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: const Icon(Icons.logout, color: Colors.white),
                   onPressed: () async {
                     await _secureStorage.write(key: "isLogoutClicked", value: "true");
-                    Navigator.pushNamed(context, '/');
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
                   },
                   padding: EdgeInsets.zero, // Reduce padding around icon
                   constraints: const BoxConstraints(minHeight: 36, minWidth: 36),
