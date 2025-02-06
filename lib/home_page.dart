@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'components/bottomnavigation.dart';
 import 'components/profileAppBar.dart';
+import 'dart:async';
+import 'auth/login_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,15 +38,30 @@ class _HomePageState extends State<HomePage> {
     final body = jsonEncode({'customerId': 4001});
 
     try {
-      final response = await http.post(url, headers: headers, body: body);
+      final response = await http
+          .post(url, headers: headers, body: body)
+          .timeout(Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         await _storage.write(key: 'api_response', value: response.body);
         print("Data stored securely.");
-        _loadData(); // Load data after storing it
+        _loadData();
       } else {
         print("Failed to fetch data: ${response.statusCode}");
       }
+    } on TimeoutException catch (_) {
+      print("Connection timeout. Please try again later.");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Connection timeout. Please try again later.")),
+      );
+
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      });
     } catch (e) {
       print("Error fetching data: $e");
     }

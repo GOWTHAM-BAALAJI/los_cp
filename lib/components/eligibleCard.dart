@@ -59,7 +59,41 @@ class EligibleLoanCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () async {
+                              bool? isConfirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Confirm'),
+                                    content: Text('Do you want to send the request for the Loan?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        },
+                                        child: Text('No'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                        child: Text('Yes'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+
+                              if (isConfirmed == true) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Request Sent! Concern Person will contact you."),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+
                             child: Row(
                               children: const [
                                 Text(
