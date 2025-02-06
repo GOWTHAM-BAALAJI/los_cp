@@ -8,6 +8,7 @@ class LoanDetailCard extends StatefulWidget {
   final num? LoanEMIAmount;
   final num? LoanTenure;
   final String? LoanCollectionDay;
+  final String? LoanPaymentFrequency;
   final String? LoanRejectReason;
 
   LoanDetailCard({
@@ -19,6 +20,7 @@ class LoanDetailCard extends StatefulWidget {
     this.LoanEMIAmount,
     this.LoanTenure,
     this.LoanCollectionDay,
+    this.LoanPaymentFrequency,
     this.LoanRejectReason,
   }) : super(key: key);
 
@@ -36,6 +38,7 @@ class _LoanDetailCardState extends State<LoanDetailCard> {
     num loanEMIAmount = widget.LoanEMIAmount ?? 0;
     num loanTenure = widget.LoanTenure ?? 0;
     String loanCollectionDay = widget.LoanCollectionDay ?? "Not Set";
+    String loanPaymentFrequency = widget.LoanPaymentFrequency ?? "weeks";
     String loanRejectReason = widget.LoanRejectReason ?? "No Reason";
 
     Color statusColor;
@@ -190,13 +193,13 @@ class _LoanDetailCardState extends State<LoanDetailCard> {
                           ),
                         ),
                         Text(
-                          "${loanTenure} weeks",
+                          "${loanPaymentFrequency == "Biweekly" ? loanTenure * 2 : loanTenure} ${loanPaymentFrequency == "Monthly" ? 'months' : 'weeks'}",
                           style: TextStyle(
                             color: Color(0xFF101828),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
-                        ),
+                        )
                       ],
                     ),
                     Column(
