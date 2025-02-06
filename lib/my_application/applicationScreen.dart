@@ -126,18 +126,21 @@ class _applicationScreenState extends State<applicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            GoBack(title: "Portfolio"),
-            Row(
-              children: [
-                TabComponent1(tabs1: tabs1),
-              ],
-            )
-          ],
+      body: SingleChildScrollView(
+        child:       Container(
+          child: Column(
+            children: [
+              GoBack(title: "Portfolio"),
+              Row(
+                children: [
+                  TabComponent1(tabs1: tabs1),
+                ],
+              )
+            ],
+          ),
         ),
-      ),
+      )
+
     );
   }
 }
