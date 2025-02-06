@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'edit_profile_component.dart';
 import '../components/expand_widget.dart';
+import '../components/profileAppBar.dart';
+import '../components/goback_button.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -20,9 +22,15 @@ class EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
+        appBar: ProfileAppBar(
+          name: 'Anika',
+          id: '94556387',
+          location: 'Jhalod',
+        ),
         body: SingleChildScrollView(
             child: Column(
                 children: [
+                  GoBack(title: "Edit Profile"),
                   ProfileDetailsCardWidget(
                     name: 'Anika Rehman',
                     id: '849557572',
@@ -37,9 +45,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                     motherName: 'Fatima Begum',
                     fatherName: 'Salim Rahman',
                     profileImageUrl: 'assets/images/female_profilepic.png',
-                    onEditPressed: () {
-                      // Handle edit button press
-                    },
                   ),
                   Column(
                     children: [
@@ -50,7 +55,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                           children: [
                             Text('Nominee Name: John Doe'),
                             Text('Relationship: Spouse'),
-                            // Add more content widgets as needed
                           ],
                         ),
                       ),
@@ -61,7 +65,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                           children: [
                             Text('Product Type: Term Insurance'),
                             Text('Coverage Amount: 500,000'),
-                            // Add more content widgets as needed
                           ],
                         ),
                       ),
@@ -72,7 +75,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                           children: [
                             Text('Bank Name: ABC Bank'),
                             Text('Account Number: XXXXX1234'),
-                            // Add more content widgets as needed
                           ],
                         ),
                       ),
@@ -83,7 +85,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                           children: [
                             Text('House Address: ABC Street'),
                             Text('House Type: Owned'),
-                            // Add more content widgets as needed
                           ],
                         ),
                       ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
   final String id;
   final String location;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   const ProfileAppBar({
     Key? key,
@@ -89,7 +91,8 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.logout, color: Colors.white),
-                  onPressed: () {
+                  onPressed: () async {
+                    await _secureStorage.write(key: "isLogoutClicked", value: "true");
                     Navigator.pushNamed(context, '/');
                   },
                   padding: EdgeInsets.zero, // Reduce padding around icon

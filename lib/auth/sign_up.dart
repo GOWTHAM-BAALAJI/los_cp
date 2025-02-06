@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import '../components/otp.dart';
 import '../home_page.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'widgets/custom_textfield.dart';
+import 'widgets/login_header.dart';
+import 'widgets/auth_button.dart';
+import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -10,30 +16,119 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final _userIdController = TextEditingController();
+  final _customerIdController = TextEditingController();
   final _dobController = TextEditingController();
   final _mobileController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
+  bool _isLoading = false;
+  bool _obscurePassword = true;
   bool _isOtpVerified = false;
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _signUp() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String apiUrl = "http://sandbox.spandanasphoorty.com:8080/api/cp/V1/singup";
+    final String authorization = "c3BhbmRhbmE6U3BhbmRhbmFAMjAyMyM=";
+    String encodedPassword = base64Encode(utf8.encode(_passwordController.text.trim()));
+
+    print("user Id Password");
+    print(_customerIdController.text.trim());
+    print(encodedPassword);
+    if (_customerIdController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Customer Id cannot be empty")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (_passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Password cannot be empty.")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    final data = {
+      "customerId": _customerIdController.text.trim(),
+      "password": encodedPassword,
+      "dob": _dobController.text.trim(),
+      "mobileNumber": _mobileController.text.trim()
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Authorization": "Basic $authorization",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(data),
+      );
+
+      final responseData = jsonDecode(response.body);
+      print("Response: $responseData");
+      print("Status Code: ${response.statusCode}");
+
+      if (responseData['status']['code'] == '000') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        _showErrorDialog("Login failed: ${responseData['status']['message']}");
+      }
+    } catch (e) {
+      print("Error: $e");
+      _showErrorDialog("An error occurred. Please try again.");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   void showOtpModal() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return OtpScreen(
+          mobileNumber: _mobileController.text.trim(),
           onOtpVerified: () {
             setState(() {
-              _isOtpVerified = true; // Update UI when OTP is verified
+              _isOtpVerified = true;
             });
-            Navigator.pop(context); // Close OTP dialog
+            Navigator.pop(context);
           },
         );
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +138,7 @@ class _SignUpPageState extends State<SignUpPage> {
           double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
           double containerHeight = keyboardHeight > 0
               ? constraints.maxHeight * 0.3
-              : constraints.maxHeight * 0.4;
+              : constraints.maxHeight * 0.5;
 
           return Stack(
             children: [
@@ -92,289 +187,79 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Text(
-                              "Create an account.",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF090A0A),
-                                height: 36 / 24,
-                              ),
-                              textAlign: TextAlign.center,
+                            const LoginHeader(
+                              title: "Create an account",
+                              subtitle: "Sign up to get started",
                             ),
                             const SizedBox(height: 20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'User ID',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            height: 14.4 / 12,
-                                            color: Color(0xFF636363)
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' *', // Asterisk symbol
-                                        style: TextStyle(fontSize: 12,
-                                            color: Colors.red), // Red asterisk
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                SizedBox(
-                                  width: 295,
-                                  height: 40,
-                                  child: Center(
-                                    child: TextField(
-                                      controller: _userIdController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Enter your User ID',
-                                        hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          height: 20 / 12,
-                                        ),
-                                        border: OutlineInputBorder(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Date of Birth',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            height: 14.4 / 12,
-                                            color: Color(0xFF636363)
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' *',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.red),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                SizedBox(
-                                  width: 295,
-                                  height: 40,
-                                  child: Center(
-                                    child: TextField(
-                                      controller: _dobController,
-                                      decoration: InputDecoration(
-                                        hintText: 'DD/MM/YY',
-                                        hintStyle: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          height: 20 / 12,
-                                        ),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Mobile Number',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            height: 14.4 / 12,
-                                            color: Color(0xFF636363)
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' *',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.red),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                SizedBox(
-                                  width: 295,
-                                  height: 40,
-                                  child: Center(
-                                    child: TextField(
-                                      controller: _mobileController,
-                                      decoration: InputDecoration(
-                                        hintText: 'Enter your mobile number',
-                                        hintStyle: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          height: 20 / 12,
-                                        ),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-
-                              ],
-                            ),
-                            if(_isOtpVerified) ...[
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Password',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          height: 14.4 / 12,
-                                          color: Color(0xFF636363)
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: ' *',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              SizedBox(
-                                width: 295,
-                                height: 40,
-                                child: Center(
-                                  child: TextField(
-                                    controller: _passwordController,
-                                    obscureText: true,  // Hide the password
-                                    decoration: InputDecoration(
-                                      hintText: 'Enter your password',
-                                      hintStyle: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        height: 20 / 12,
-                                      ),
-                                      border: const OutlineInputBorder(),
-                                    ),
-                                  ),
-                                ),
+                            if (!_isOtpVerified) ...[
+                              CustomTextField(
+                                label: "Mobile Number",
+                                hint: "Enter your mobile number",
+                                controller: _mobileController,
+                                isRequired: true,
                               ),
                               const SizedBox(height: 20),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Confirm Password',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          height: 14.4 / 12,
-                                          color: Color(0xFF636363)
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: ' *',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              SizedBox(
-                                width: 295,
-                                height: 40,
-                                child: Center(
-                                  child: TextField(
-                                    controller: _confirmPasswordController,
-                                    obscureText: true,  // Hide the password
-                                    decoration: InputDecoration(
-                                      hintText: 'Confirm your password',
-                                      hintStyle: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        height: 20 / 12,
-                                      ),
-                                      border: const OutlineInputBorder(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                            ],
-                            if(!_isOtpVerified) ...[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 60),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xffff9021),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    showOtpModal();
-                                  },
-                                  child: const Text("Verify Number", style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      height: 16.8 / 14)),
-                                ),
+                              AuthButton(
+                                text: "Verify Number",
+                                onPressed: showOtpModal,
+                                backgroundColor: Color(0xffff9021),
                               ),
                             ] else ...[
+                              CustomTextField(
+                                label: "User ID",
+                                hint: "Enter your User ID",
+                                controller: _customerIdController,
+                                isRequired: true,
+                              ),
                               const SizedBox(height: 20),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 60),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xffff9021),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => HomePage()),
-                                    );
-                                  },
-                                  child: const Text("Submit", style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      height: 16.8 / 14)),
-                                ),
+                              CustomTextField(
+                                label: "Date of Birth",
+                                hint: "DD/MM/YY",
+                                controller: _dobController,
+                                isRequired: true,
+                              ),
+                              const SizedBox(height: 20),
+                              CustomTextField(
+                                label: "Password",
+                                hint: "Enter your password",
+                                controller: _passwordController,
+                                isRequired: true,
+                                isPassword: true,
+                                obscureText: _obscurePassword,
+                                onPasswordToggle: () => setState(() => _obscurePassword = !_obscurePassword),
+                              ),
+                              const SizedBox(height: 20),
+                              CustomTextField(
+                                label: "Confirm Password",
+                                hint: "Confirm your password",
+                                controller: _confirmPasswordController,
+                                isRequired: true,
+                                isPassword: true,
+                                obscureText: _obscurePassword,
+                                onPasswordToggle: () => setState(() => _obscurePassword = !_obscurePassword),
+                              ),
+                              const SizedBox(height: 20),
+                              AuthButton(
+                                text: "Register",
+                                onPressed: _signUp,
+                                isLoading: _isLoading,
+                                backgroundColor: Color(0xffff9021),
                               ),
                             ],
                             TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  "Already have an account? Log in!",
-                                  style: TextStyle(
-                                    color: Color(0xFF2051E5),
-                                    fontSize: 10,
-                                    height: 12 / 10,
-                                  ),
-                                ))
+                              onPressed: () => Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const LoginPage())
+                              ),
+                              child: const Text(
+                                "Already have an account? Log in!",
+                                style: TextStyle(
+                                  color: Color(0xFF2051E5),
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),

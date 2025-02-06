@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../components/edit_button.dart';
 
 class ProfileDetailsCardWidget extends StatelessWidget {
   final String name;
@@ -100,13 +99,11 @@ class ProfileDetailsCardWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-                        EditButton(
-                          onPressed: () {
-                            // Your edit functionality here
-                            print("Edit button pressed!");
-                            // Navigate to edit screen, update data, etc.
-                          },
-                        ),
+                        // EditButton(
+                        //   onPressed: () {
+                        //     print("Edit button pressed!");
+                        //   },
+                        // ),
                       ],
                     ),
                   ),
@@ -119,7 +116,7 @@ class ProfileDetailsCardWidget extends StatelessWidget {
                         _infoRow('Age', age, 'DOB', dob, 'Religion', religion),
                         SizedBox(height: 8),
                         _infoRow('Education', education, 'Mother\'s name', motherName, 'Father\'s name', fatherName),
-                        SizedBox(height: 8),
+                        SizedBox(height: 16),
                         _buildAddressSection(address),
                         SizedBox(height: 16),
                       ],
@@ -140,7 +137,6 @@ class ProfileDetailsCardWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Label takes 40% width using Expanded with a flex of 2
           Expanded(
             flex: 3,
             child: Column(

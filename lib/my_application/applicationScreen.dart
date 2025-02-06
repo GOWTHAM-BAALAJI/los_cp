@@ -6,6 +6,7 @@ import './loandetail_card.dart';
 import '../components/tab_type_1.dart';
 import './searchBar.dart';
 
+import '../components/goback_button.dart';
 void main() {
   runApp(MaterialApp(
     home: applicationScreen(),
@@ -125,11 +126,18 @@ class _applicationScreenState extends State<applicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
-        children: [
-          TabComponent1(tabs1: tabs1),
-        ],
-      )
+      body: Container(
+        child: Column(
+          children: [
+            GoBack(title: "Portfolio"),
+            Row(
+              children: [
+                TabComponent1(tabs1: tabs1),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }

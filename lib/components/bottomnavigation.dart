@@ -18,7 +18,7 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
-      DashboardScreen(userName: userName),
+      DashboardScreen(userName: userName,onNavigate: onItemTapped,),
       applicationScreen(),
       TransactionsPage(),
       ProfilePage(),

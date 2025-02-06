@@ -5,8 +5,13 @@ import '../my_application/applicationScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userName;
+  final Function(int)? onNavigate;
 
-  const DashboardScreen({Key? key, required this.userName}) : super(key: key);
+  const DashboardScreen({
+    Key? key,
+    required this.userName,
+    this.onNavigate,
+  }) : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -19,7 +24,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async =>false,
+      child:Scaffold(
       body: SingleChildScrollView(
       child:Padding(
         padding: const EdgeInsets.all(16.0),
@@ -56,7 +63,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
                         image: DecorationImage(
-                          image: AssetImage('assets/image_${index + 1}.jpg'),
+                          image: AssetImage('assets/images/banner${index + 1}.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -95,7 +102,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    applicationScreen();
+                    if (widget.onNavigate != null) {
+                      widget.onNavigate!(1);
+                    }
                   },
                   child: const Text(
                     'View All',
@@ -243,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
-      ));
+      )));
   }
 
   Widget _buildStatusItem(String number, String status, Color color) {
