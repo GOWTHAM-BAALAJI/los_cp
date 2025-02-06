@@ -62,7 +62,7 @@ class ProfilePageState extends State<ProfilePage> {
                 return Center(child: Text('No active loans'));
               } else {
                 final loan = activeLoans[index];
-                return loanDetailCard(
+                return LoanDetailCard(
                   LoanName: loan['productName'] ?? '',
                   LoanNo: loan['loanDisplayId'].toString(),
                   LoanStatus: loan['loanStatus'] ?? '',
@@ -97,7 +97,7 @@ class ProfilePageState extends State<ProfilePage> {
                 return Center(child: Text('No previous loans'));
               } else {
                 final loan = previousLoans[index];
-                return loanDetailCard(
+                return LoanDetailCard(
                   LoanName: loan['productName'] ?? '',
                   LoanNo: loan['loanDisplayId'].toString(),
                   LoanStatus: loan['loanStatus'] ?? '',
