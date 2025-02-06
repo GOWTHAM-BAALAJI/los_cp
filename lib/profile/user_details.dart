@@ -42,7 +42,6 @@ class ProfileDetailItem extends StatelessWidget {
 class ProfileDetailsCard extends StatelessWidget {
   final String name;
   final String id;
-  final String lo;
   final String village;
   final String centre;
   final String group;
@@ -55,7 +54,6 @@ class ProfileDetailsCard extends StatelessWidget {
     Key? key,
     required this.name,
     required this.id,
-    required this.lo,
     required this.village,
     required this.centre,
     required this.group,
@@ -69,7 +67,6 @@ class ProfileDetailsCard extends StatelessWidget {
     return ProfileDetailsCard(
       name: json['name'],
       id: json['id'],
-      lo: json['lo'],
       village: json['village'],
       centre: json['centre'],
       group: json['group'],
@@ -136,22 +133,6 @@ class ProfileDetailsCard extends StatelessWidget {
                                   children: [
                                     Text(
                                       'ID: $id',
-                                      style: TextStyle(
-                                        fontFamily: "Lato",
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                        color: Color(0xFF101010),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Container(
-                                      height: 10,
-                                      width: 2,
-                                      color: Color(0xFF101010),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'LO: $lo',
                                       style: TextStyle(
                                         fontFamily: "Lato",
                                         fontWeight: FontWeight.w500,

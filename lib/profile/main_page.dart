@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'user_details.dart';
 import 'digital_loan_card.dart';
@@ -10,15 +11,16 @@ import '../components/profile/comments_card.dart';
 import '../my_application/loandetail_card.dart';
 import '../components/goback_button.dart';
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ProfilePage(),
-  ));
-}
+// void main() {
+//   runApp(MaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     home: ProfilePage(),
+//   ));
+// }
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key}) : super(key: key);
+  final Function(int) onNavigate;
+  ProfilePage({Key? key, required this.onNavigate}) : super(key: key);
   @override
   ProfilePageState createState() => ProfilePageState();
 }
@@ -27,6 +29,22 @@ class ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
   Map<String, dynamic>? responseData;
   late List<TabItem1> tabs1;
+  final _storage = FlutterSecureStorage();
+
+  Future<void> _loadData() async {
+    String? jsonData = await _storage.read(key: 'api_response');
+
+    if (jsonData != null) {
+      Map<String, dynamic> data = jsonDecode(jsonData);
+
+      if (data.containsKey("customerDetails") && data["customerDetails"].isNotEmpty) {
+        setState(() {
+          responseData = data;
+        });
+        updateTabs();
+      }
+    }
+  }
 
   String _getCollectionDay(String frequency) {
     switch (frequency.toLowerCase()) {
@@ -210,7 +228,7 @@ class ProfilePageState extends State<ProfilePage> {
     setState(() {
       isLoading = false;
     });
-    fetchProfileData();
+    _loadData();
 
     tabs1 = [
       TabItem1(
@@ -234,52 +252,52 @@ class ProfilePageState extends State<ProfilePage> {
 
   double totalDisbursedAmount = 0.0;
 
-  Future<void> fetchProfileData() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final url = 'https://apiuat.spandanasphoorty.com/crm/api/getdetails';
-    final bodyData = json.encode({
-      'customerId': 3009,
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'client_id': '0534da59ff1647d491a46d2f31378895',
-          'client_secret': 'abA1dFdD41E245EDADC77CA8d1A75a7F'
-        },
-        body: bodyData,
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-
-        if (data['loanDetails'] != null) {
-          totalDisbursedAmount = 0.0;
-          for (var loan in data['loanDetails']) {
-            totalDisbursedAmount += loan['disbursedAmount'] ?? 0.0;
-          }
-        }
-
-        setState(() {
-          responseData = data;
-          isLoading = false;
-        });
-        updateTabs();
-      } else {
-        throw Exception('Failed to load profile');
-      }
-    } catch (e) {
-      print('Error fetching profile data: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  // Future<void> fetchProfileData() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   final url = 'https://apiuat.spandanasphoorty.com/crm/api/getdetails';
+  //   final bodyData = json.encode({
+  //     'customerId': 3009,
+  //   });
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'client_id': '0534da59ff1647d491a46d2f31378895',
+  //         'client_secret': 'abA1dFdD41E245EDADC77CA8d1A75a7F'
+  //       },
+  //       body: bodyData,
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> data = json.decode(response.body);
+  //
+  //       if (data['loanDetails'] != null) {
+  //         totalDisbursedAmount = 0.0;
+  //         for (var loan in data['loanDetails']) {
+  //           totalDisbursedAmount += loan['disbursedAmount'] ?? 0.0;
+  //         }
+  //       }
+  //
+  //       setState(() {
+  //         responseData = data;
+  //         isLoading = false;
+  //       });
+  //       updateTabs();
+  //     } else {
+  //       throw Exception('Failed to load profile');
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching profile data: $e');
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   String _formatDate(String date) {
     DateTime parsedDate = DateTime.parse(date);
@@ -293,12 +311,11 @@ class ProfilePageState extends State<ProfilePage> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              GoBack(title: "Profile"),
+              GoBack(title: "Profile",onNavigate: widget.onNavigate),
               if (isLoading)
                 ProfileDetailsCard(
                   name: 'Loading...',
                   id: 'Loading...',
-                  lo: 'Loading...',
                   village: 'Loading...',
                   centre: 'Loading...',
                   group: 'Loading...',
@@ -311,7 +328,6 @@ class ProfilePageState extends State<ProfilePage> {
                 ProfileDetailsCard(
                   name: responseData!["customerDetails"][0]["CustomerName"],
                   id: responseData!["customerDetails"][0]["CustomerId"].toString(),
-                  lo: "Random Person",
                   village: responseData!["customerDetails"][0]["village"],
                   centre: responseData!["customerDetails"][0]["CenterName"],
                   group: responseData!["customerDetails"][0]["GroupName"],
@@ -324,7 +340,6 @@ class ProfilePageState extends State<ProfilePage> {
                 ProfileDetailsCard(
                   name: 'Loading...',
                   id: 'Loading...',
-                  lo: 'Loading...',
                   village: 'Loading...',
                   centre: 'Loading...',
                   group: 'Loading...',

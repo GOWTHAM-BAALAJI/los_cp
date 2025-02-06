@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../components/tab_type_2.dart';
 import '../components/transactions/transactions_history.dart';
 import '../components/goback_button.dart';
@@ -41,6 +42,22 @@ class TransactionsPageState extends State<TransactionsPage> {
   late List<TabItem2> tabs2_transactions;
   Map<String, List<dynamic>> transactionsByMonth = {};
   List<dynamic> transactionList = [];
+  final _storage = FlutterSecureStorage();
+
+  Future<void> _loadData() async {
+    String? jsonData = await _storage.read(key: 'api_response');
+
+    if (jsonData != null) {
+      Map<String, dynamic> data = jsonDecode(jsonData);
+
+      if (data.containsKey("customerDetails") && data["customerDetails"].isNotEmpty) {
+        setState(() {
+          responseData = data;
+        });
+        updateTabs();
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -50,7 +67,7 @@ class TransactionsPageState extends State<TransactionsPage> {
         isLoading = false;
       });
     });
-    fetchProfileData();
+    _loadData();
 
     tabs2_transactions = [
       TabItem2(
@@ -177,45 +194,45 @@ class TransactionsPageState extends State<TransactionsPage> {
     });
   }
 
-  Future<void> fetchProfileData() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final url = 'https://apiuat.spandanasphoorty.com/crm/api/getdetails';
-    final bodyData = json.encode({
-      'customerId': 3009,
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'client_id': '0534da59ff1647d491a46d2f31378895',
-          'client_secret': 'abA1dFdD41E245EDADC77CA8d1A75a7F'
-        },
-        body: bodyData,
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-
-        setState(() {
-          responseData = data;
-          isLoading = false;
-        });
-        updateTabs();
-      } else {
-        throw Exception('Failed to load profile');
-      }
-    } catch (e) {
-      print('Error fetching profile data: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  // Future<void> fetchProfileData() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   final url = 'https://apiuat.spandanasphoorty.com/crm/api/getdetails';
+  //   final bodyData = json.encode({
+  //     'customerId': 3009,
+  //   });
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'client_id': '0534da59ff1647d491a46d2f31378895',
+  //         'client_secret': 'abA1dFdD41E245EDADC77CA8d1A75a7F'
+  //       },
+  //       body: bodyData,
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> data = json.decode(response.body);
+  //
+  //       setState(() {
+  //         responseData = data;
+  //         isLoading = false;
+  //       });
+  //       updateTabs();
+  //     } else {
+  //       throw Exception('Failed to load profile');
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching profile data: $e');
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

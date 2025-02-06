@@ -36,15 +36,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: any
   pin_code_fields: any
-#  screenshot: any
+  screenshot: any
   path_provider: any
-#  gallery_saver: any
-#  flutter_local_notifications: any
-#  open_file: any
+  gallery_saver: any
+  flutter_local_notifications: any
+  open_file: any
   intl: any
   flutter_secure_storage: any
   firebase_core: any
   firebase_auth: any
+  pdf: any
 
 dev_dependencies:
   flutter_test:
