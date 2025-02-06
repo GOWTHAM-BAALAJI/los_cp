@@ -27,7 +27,6 @@ class TransactionItemWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Icon Container
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -42,7 +41,6 @@ class TransactionItemWidget extends StatelessWidget {
           ),
           const SizedBox(width: 12),
 
-          // Transaction Details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +67,6 @@ class TransactionItemWidget extends StatelessWidget {
               ],
             ),
           ),
-
-          // Amount and Date
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

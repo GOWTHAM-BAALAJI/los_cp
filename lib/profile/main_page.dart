@@ -6,6 +6,9 @@ import 'digital_loan_card.dart';
 import '../components/tab_type_1.dart';
 import '../components/tab_type_2.dart';
 import '../transactions/main_page.dart';
+import '../components/profile/comments_card.dart';
+import '../my_application/loandetail_card.dart';
+import '../components/goback_button.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -25,18 +28,93 @@ class ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? responseData;
   late List<TabItem1> tabs1;
 
-  final tabs2_loans = [
-    TabItem2(
-      title: 'Current & Eligible',
-      content: Center(child: Text('Current & Eligible Content')),
-    ),
-    TabItem2(
-      title: 'Previous Loans',
-      content: Center(child: Text('Previous Loans Content')),
-    ),
-  ];
+  String _getCollectionDay(String frequency) {
+    switch (frequency.toLowerCase()) {
+      case 'biweekly':
+        return 'Every 2 weeks';
+      case 'weekly':
+        return 'Every week';
+      case 'monthly':
+        return 'Monthly';
+      default:
+        return frequency;
+    }
+  }
 
   void updateTabs() {
+    final tabs2_loans = [
+      TabItem2(
+        title: 'Current & Eligible',
+        content: responseData != null && responseData!['loanDetails'].isNotEmpty
+            ? Container(
+          margin: EdgeInsets.zero,
+          height: 600,
+          child: ListView.builder(
+            itemCount: responseData!['loanDetails']
+                .where((loan) => loan['loanStatus'] == 'Active')
+                .length,
+            itemBuilder: (context, index) {
+              final activeLoans = responseData!['loanDetails']
+                  .where((loan) => loan['loanStatus'] == 'Active')
+                  .toList();
+
+              if (activeLoans.isEmpty) {
+                return Center(child: Text('No active loans'));
+              } else {
+                final loan = activeLoans[index];
+                return loanDetailCard(
+                  LoanName: loan['productName'] ?? '',
+                  LoanNo: loan['loanDisplayId'].toString(),
+                  LoanStatus: loan['loanStatus'] ?? '',
+                  LoanOverdueAmount: loan['overdueAmount']?.toDouble() ?? 0.0,
+                  LoanEMIAmount: loan['emiAmount']?.toDouble() ?? 0.0,
+                  LoanTenure: loan['noOfInstallments'] ?? 0,
+                  LoanCollectionDay: _getCollectionDay(loan['paymentFrequency'] ?? ''),
+                  LoanRejectReason: '',
+                );
+              }
+            },
+          ),
+        )
+            : Center(child: Text('No active loans')),
+      ),
+      TabItem2(
+        title: 'Previous Loans',
+        content: responseData != null && responseData!['loanDetails'].isNotEmpty
+            ? Container(
+          margin: EdgeInsets.zero,
+          height: 600,
+          child: ListView.builder(
+            itemCount: responseData!['loanDetails']
+                .where((loan) => loan['loanStatus'] != 'Active')
+                .length,
+            itemBuilder: (context, index) {
+              final previousLoans = responseData!['loanDetails']
+                  .where((loan) => loan['loanStatus'] != 'Active')
+                  .toList();
+
+              if (previousLoans.isEmpty) {
+                return Center(child: Text('No previous loans'));
+              } else {
+                final loan = previousLoans[index];
+                return loanDetailCard(
+                  LoanName: loan['productName'] ?? '',
+                  LoanNo: loan['loanDisplayId'].toString(),
+                  LoanStatus: loan['loanStatus'] ?? '',
+                  LoanOverdueAmount: loan['overdueAmount']?.toDouble() ?? 0.0,
+                  LoanEMIAmount: loan['emiAmount']?.toDouble() ?? 0.0,
+                  LoanTenure: loan['noOfInstallments'] ?? 0,
+                  LoanCollectionDay: _getCollectionDay(loan['paymentFrequency'] ?? ''),
+                  LoanRejectReason: '',
+                );
+              }
+            },
+          ),
+        )
+            : Center(child: Text('No previous loans')),
+      ),
+    ];
+
     setState(() {
       tabs1 = [
         TabItem1(
@@ -49,7 +127,26 @@ class ProfilePageState extends State<ProfilePage> {
         ),
         TabItem1(
           title: 'Comments',
-          content: Center(child: Text('Comments Content')),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                CommentCard(
+                  profilePic: "assets/images/female_profilepic.png",
+                  name: "Rohit Thiru",
+                  date: "Apr 11, 2024",
+                  time: "12:34 PM",
+                  comment: "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor",
+                ),
+                CommentCard(
+                  profilePic: "assets/images/female_profilepic.png",
+                  name: "Rohit Thiru",
+                  date: "Apr 11, 2024",
+                  time: "12:34 PM",
+                  comment: "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor",
+                ),
+              ],
+            ),
+          ),
         ),
         TabItem1(
           title: 'Digital Loan Card',
@@ -66,7 +163,7 @@ class ProfilePageState extends State<ProfilePage> {
             insuranceCoveredFor: "${responseData!["customerDetails"][0]["CustomerName"] ?? ''} & ${responseData!["customerDetails"][0]["FatherSpouseName"] ?? ''}",
             accidentalApplicant: responseData!["customerDetails"][0]["NomineeName"]?.toString() ?? '',
             accidentalPremium: responseData!["loanDetails"][0]["insurancePremium"]?.toString() ?? '',
-            disbursementDate: responseData!["loanDetails"].last["disbursementDate"]?.toString() ?? '',
+            disbursementDate: _formatDate(responseData!["loanDetails"].last["disbursementDate"]!.toString()) ?? '',
             interestRate: responseData!["loanDetails"][0]["roi"]?.toString() ?? '',
             lpf: responseData!["loanDetails"][0]["processingFee"]?.toString() ?? '',
             loanRepayment: responseData!["loanDetails"][0]["paymentFrequency"]?.toString() ?? '',
@@ -91,15 +188,15 @@ class ProfilePageState extends State<ProfilePage> {
     tabs1 = [
       TabItem1(
         title: 'Loans',
-        content: TabComponent2(tabs2: tabs2_loans),
+        content: Center(child: Text('Loading...')),
       ),
       TabItem1(
         title: 'Transactions',
-        content: TransactionsPage(),
+        content: Center(child: Text('Loading...')),
       ),
       TabItem1(
         title: 'Comments',
-        content: Center(child: Text('Comments Content')),
+        content: Center(child: Text('Loading...')),
       ),
       TabItem1(
         title: 'Digital Loan Card',
@@ -117,7 +214,7 @@ class ProfilePageState extends State<ProfilePage> {
 
     final url = 'https://apiuat.spandanasphoorty.com/crm/api/getdetails';
     final bodyData = json.encode({
-      'customerId': 3002,
+      'customerId': 3009,
     });
 
     try {
@@ -169,6 +266,7 @@ class ProfilePageState extends State<ProfilePage> {
         body: SingleChildScrollView(
           child: Column(
             children: [
+              GoBack(title: "Profile"),
               if (isLoading)
                 ProfileDetailsCard(
                   name: 'Loading...',
@@ -182,7 +280,7 @@ class ProfilePageState extends State<ProfilePage> {
                   status: 'Loading...',
                   profileImageUrl: 'assets/images/female_profilepic.png',
                 )
-              else if (responseData != null) // Ensure responseData is not null
+              else if (responseData != null)
                 ProfileDetailsCard(
                   name: responseData!["customerDetails"][0]["CustomerName"],
                   id: responseData!["customerDetails"][0]["CustomerId"].toString(),

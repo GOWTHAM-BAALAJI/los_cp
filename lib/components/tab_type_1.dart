@@ -28,14 +28,14 @@ class _TabComponent1State extends State<TabComponent1> {
             color: Color(0xFFFFFFFF),
           ),
           height: 50,
-          width: MediaQuery.of(context).size.width, // Make it full width
+          width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal:8.0),
               child: Row(
                 children: widget.tabs1.map((tab) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0), // Add spacing
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: InkWell(
                     onTap: () {
                       setState(() {
@@ -46,16 +46,19 @@ class _TabComponent1State extends State<TabComponent1> {
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       decoration: BoxDecoration(
                         color: _selectedIndex == widget.tabs1.indexOf(tab)
-                            ? Color(0xFFE97A0A) // Active tab color
-                            : Color(0xFFFFFFFF), // Inactive tab color
+                            ? Color(0xFFE97A0A)
+                            : Color(0xFFFFFFFF),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         tab.title,
                         style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontFamily: "Lato",
+                          fontSize: 12,
                           color: _selectedIndex == widget.tabs1.indexOf(tab)
-                              ? Color(0xFFFFFFFF) // Active text color
-                              : Color(0xFF969696), // Inactive text color
+                              ? Color(0xFFFFFFFF)
+                              : Color(0xFF969696),
                         ),
                       ),
                     ),
@@ -66,7 +69,6 @@ class _TabComponent1State extends State<TabComponent1> {
           ),
         ),
         SizedBox(height: 10),
-        // Display the content of the selected tab
         widget.tabs1[_selectedIndex].content,
       ],
     );

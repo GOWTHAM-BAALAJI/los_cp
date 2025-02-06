@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import '../components/tab_type_2.dart';
 import '../components/transactions/transactions_history.dart';
+import '../components/goback_button.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -38,6 +39,7 @@ class TransactionsPageState extends State<TransactionsPage> {
   bool isLoading = true;
   Map<String, dynamic>? responseData;
   late List<TabItem2> tabs2_transactions;
+  Map<String, List<dynamic>> transactionsByMonth = {};
   List<dynamic> transactionList = [];
 
   @override
@@ -52,11 +54,11 @@ class TransactionsPageState extends State<TransactionsPage> {
 
     tabs2_transactions = [
       TabItem2(
-        title: 'April',
+        title: 'Loading...',
         content: Center(child: Text('Loading...')),
       ),
       TabItem2(
-        title: 'May',
+        title: 'Loading...',
         content: Center(child: Text('Loading...')),
       ),
     ];
@@ -75,10 +77,8 @@ class TransactionsPageState extends State<TransactionsPage> {
   double getTransactionAmount(Map<String, dynamic> transaction) {
     final particulars = transaction['particulars']?.toString() ?? '';
     if (particulars == "Disbursement") {
-      // Convert dr value to double safely
       return double.tryParse(transaction['dr']?.toString() ?? '0') ?? 0.0;
     } else {
-      // Convert cr value to double safely
       return double.tryParse(transaction['cr']?.toString() ?? '0') ?? 0.0;
     }
   }
@@ -89,10 +89,7 @@ class TransactionsPageState extends State<TransactionsPage> {
     }
 
     try {
-      // Parse the original date string (assuming it's in a standard format)
       DateTime parsedDate = DateTime.parse(dateStr);
-
-      // Format the date as 'dd-MM-yyyy'
       return DateFormat('dd-MM-yyyy').format(parsedDate);
     } catch (e) {
       print('Error formatting date: $e');
@@ -100,84 +97,84 @@ class TransactionsPageState extends State<TransactionsPage> {
     }
   }
 
+  void organizeTransactionsByMonth() {
+    transactionsByMonth.clear();
 
-  void updateTabs() {
-    try {
-      transactionList.clear();
+    if (responseData != null && responseData!['loanDetails'] is List) {
+      List<dynamic> loanDetails = responseData!['loanDetails'];
 
-      if (responseData != null && responseData!['loanDetails'] is List) {
-        List<dynamic> loanDetails = responseData!['loanDetails'];
+      for (var loan in loanDetails) {
+        if (loan['transactionDetails'] is List) {
+          List<dynamic> transactions = loan['transactionDetails'];
+          for (var transaction in transactions) {
+            String? dateStr = transaction['date']?.toString();
+            if (dateStr != null) {
+              try {
+                DateTime parsedDate = DateTime.parse(dateStr);
+                String monthYear = DateFormat('MMMM yyyy').format(parsedDate); // Format as "Month Year"
 
-        for (int i = 0; i < loanDetails.length; i++) {
-          var loan = loanDetails[i];
-          if (loan['transactionDetails'] is List) {
-            List<dynamic> transactions = loan['transactionDetails'];
-            transactionList.addAll(transactions);
+                if (!transactionsByMonth.containsKey(monthYear)) {
+                  transactionsByMonth[monthYear] = [];
+                }
+                transactionsByMonth[monthYear]!.add(transaction);
+              } catch (e) {
+                print('Error parsing date: $e');
+              }
+            }
           }
         }
       }
+    }
+  }
 
-      // Safely access customerName from customerDetails
-      String customerName = '';
-      if (responseData != null) {
-        customerName = responseData!["customerDetails"][0]["CustomerName"]?.toString() ?? '';
-      }
+  void updateTabs() {
+    organizeTransactionsByMonth(); // Organize transactions
 
-      setState(() {
-        tabs2_transactions = [
-          TabItem2(
-            title: 'April',
-            content: Center(child: Text('Current & Eligible Content')),
-          ),
-          TabItem2(
-            title: 'May',
-            content: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : responseData == null
-                ? const Center(child: Text('No data available'))
-                : Container(
-              margin: EdgeInsets.zero,
-              height: 600,
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemCount: transactionList.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> transaction =
-                  transactionList[index] is Map<String, dynamic>
-                      ? transactionList[index]
-                      : {};
+    List<String> sortedMonths = transactionsByMonth.keys.toList();
+    sortedMonths.sort((a, b) {
+      DateFormat format = DateFormat("MMMM yyyy");
+      DateTime dateA = format.parse(a);
+      DateTime dateB = format.parse(b);
+      return dateA.compareTo(dateB);
+    });
 
-                  String particulars = transaction['particulars']?.toString() ?? 'No Title';
+    setState(() {
+      tabs2_transactions = sortedMonths.map((monthYear) {
+        return TabItem2(
+          title: monthYear,
+          content: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : transactionsByMonth[monthYear] == null || transactionsByMonth[monthYear]!.isEmpty
+              ? const Center(child: Text('No data available'))
+              : Container(
+            margin: EdgeInsets.zero,
+            height: 600,
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              itemCount: transactionsByMonth[monthYear]!.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> transaction =
+                transactionsByMonth[monthYear]![index] is Map<String, dynamic>
+                    ? transactionsByMonth[monthYear]![index]
+                    : {};
 
-                  return TransactionItemWidget(
-                    title: particulars,
-                    username: customerName,
-                    amount: getTransactionAmount(transaction),
-                    date: formatDate(transaction['date']?.toString()),
-                    status: getTransactionStatus(particulars),
-                  );
-                },
-              ),
+                String customerName = responseData!["customerDetails"][0]["CustomerName"]?.toString() ?? '';
+                String particulars = transaction['particulars']?.toString() ?? 'No Title';
+
+                return TransactionItemWidget(
+                  title: particulars,
+                  username: customerName,
+                  amount: getTransactionAmount(transaction),
+                  date: formatDate(transaction['date']?.toString()),
+                  status: getTransactionStatus(particulars),
+                );
+              },
             ),
           ),
-        ];
-      });
-    } catch (e) {
-      print('Error updating tabs: $e');
-      setState(() {
-        tabs2_transactions = [
-          TabItem2(
-            title: 'April',
-            content: Center(child: Text('Error loading content')),
-          ),
-          TabItem2(
-            title: 'May',
-            content: Center(child: Text('Error loading content')),
-          ),
-        ];
-      });
-    }
+        );
+      }).toList();
+    });
   }
 
   Future<void> fetchProfileData() async {
@@ -187,7 +184,7 @@ class TransactionsPageState extends State<TransactionsPage> {
 
     final url = 'https://apiuat.spandanasphoorty.com/crm/api/getdetails';
     final bodyData = json.encode({
-      'customerId': 3002,
+      'customerId': 3009,
     });
 
     try {
@@ -227,6 +224,7 @@ class TransactionsPageState extends State<TransactionsPage> {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            // GoBack(title: "Transactions"),
             TabComponent2(tabs2: tabs2_transactions),
           ],
         ),

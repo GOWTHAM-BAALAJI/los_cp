@@ -28,7 +28,7 @@ class _TabComponent2State extends State<TabComponent2> {
             color: Colors.grey.shade100,
           ),
           height: 50,
-          width: MediaQuery.of(context).size.width, // Make it full width
+          width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
@@ -45,17 +45,17 @@ class _TabComponent2State extends State<TabComponent2> {
                         });
                       },
                       child: Container(
-                        width: 200, // Fixed width for each tab
+                        width: 200,
                         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100, // Inactive tab color
+                          color: Colors.grey.shade100,
                           borderRadius: BorderRadius.zero,
                           border: Border(
                             bottom: BorderSide(
                               color: _selectedIndex == index
-                                  ? Color(0xFF2051E5) // Black underline for selected tab
-                                  : Color(0xFFBFBFBF), // No underline for unselected tabs
-                              width: 2, // Underline thickness
+                                  ? Color(0xFF2051E5)
+                                  : Color(0xFFBFBFBF),
+                              width: 2,
                             ),
                           ),
                         ),
@@ -63,12 +63,12 @@ class _TabComponent2State extends State<TabComponent2> {
                           child: Text(
                             tab.title,
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
                               fontFamily: "Lato",
                               fontSize: 14,
                               color: _selectedIndex == index
-                                  ? Color(0xFF2051E5) // Active text color
-                                  : Color(0xFF8D8D8D), // Inactive text color
+                                  ? Color(0xFF2051E5)
+                                  : Color(0xFF8D8D8D),
                             ),
                           ),
                         ),
@@ -81,7 +81,6 @@ class _TabComponent2State extends State<TabComponent2> {
           ),
         ),
         SizedBox(height: 10),
-        // Display the content of the selected tab
         widget.tabs2[_selectedIndex].content,
       ],
     );

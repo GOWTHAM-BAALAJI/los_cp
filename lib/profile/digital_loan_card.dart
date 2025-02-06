@@ -57,7 +57,6 @@ class InfoCardState extends State<InfoCard> {
     _initializeNotifications();
   }
 
-  // Initialize notifications
   Future<void> _initializeNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -67,27 +66,22 @@ class InfoCardState extends State<InfoCard> {
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: _onNotificationTapped, // Correct callback for handling tap events
+      onDidReceiveNotificationResponse: _onNotificationTapped,
     );
   }
 
-  // This function is called when the notification is tapped
   Future<void> _onNotificationTapped(NotificationResponse notificationResponse) async {
     String? filePath = notificationResponse.payload;
 
     if (filePath != null) {
-      // Handle the notification tap (open the file using the payload as the file path)
       File file = File(filePath);
       if (await file.exists()) {
-        // Open the file with the system's default viewer
         OpenFile.open(filePath);
       }
     }
   }
 
   Future<void> _showNotification(String title, String message, String filePath) async {
-    print("Show Notifications function is called");
-
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
       'los_cp_channel_id',
@@ -106,7 +100,7 @@ class InfoCardState extends State<InfoCard> {
       title,
       message,
       platformChannelSpecifics,
-      payload: filePath, // Include the file path as payload
+      payload: filePath,
     );
   }
 
@@ -172,23 +166,23 @@ class InfoCardState extends State<InfoCard> {
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1,
-                  color: Colors.transparent,  // Border color is transparent
+                  color: Colors.transparent,
                 ),
-                borderRadius: BorderRadius.circular(10),  // Border radius for rounded corners
+                borderRadius: BorderRadius.circular(10),
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Color(0xFFD97700), Color(0xFF2051E5)],  // Gradient colors
-                  stops: [0.0, 1.0],  // Gradient stops
+                  colors: [Color(0xFFD97700), Color(0xFF2051E5)],
+                  stops: [0.0, 1.0],
                 ),
               ),
               child: Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners for the card
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 elevation: 1,
                 margin: EdgeInsets.all(0),
-                color: Color(0xFFFFFFFF), // Card background color
+                color: Color(0xFFFFFFFF),
                 child: Column(
                   children: [
                     Padding(
@@ -231,6 +225,7 @@ class InfoCardState extends State<InfoCard> {
                                   ],
                                 ),
                               ),
+                              SizedBox(width: 10),
                             ],
                           ),
                         ],
@@ -354,13 +349,11 @@ class InfoCardState extends State<InfoCard> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Label takes 40% width using Expanded with a flex of 2
           Expanded(
             flex: 3,
             child: Text(label, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, fontFamily: "Lato", color: Color(0xFF636363))),
           ),
           SizedBox(width: 8),
-          // Value takes 60% width using Expanded with a flex of 3
           Expanded(
             flex: 4,
             child: Text(value, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, fontFamily: "Lato", color: Color(0xFF101828))),

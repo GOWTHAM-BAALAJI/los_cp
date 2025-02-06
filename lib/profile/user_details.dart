@@ -39,7 +39,6 @@ class ProfileDetailItem extends StatelessWidget {
   }
 }
 
-// profile_details_card.dart
 class ProfileDetailsCard extends StatelessWidget {
   final String name;
   final String id;
@@ -168,7 +167,6 @@ class ProfileDetailsCard extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Navigate to the next page when the icon is tapped
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => EditProfilePage()),
@@ -177,7 +175,7 @@ class ProfileDetailsCard extends StatelessWidget {
                           child: const Icon(
                             Icons.chevron_right,
                             color: Color(0xFFD97700),
-                            size: 30, // You can adjust the size if needed
+                            size: 30,
                           ),
                         )
                       ],
@@ -212,84 +210,84 @@ class ProfileDetailsCard extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ProfileDetailItem(
-                            label: 'Village',
-                            value: village,
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ProfileDetailItem(
+                              label: 'Village',
+                              value: village,
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Color(0xFFD5D5D5),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: ProfileDetailItem(
-                            label: 'Centre',
-                            value: centre,
+                          Container(
+                            width: 1,
+                            color: Color(0xFFD5D5D5),
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Color(0xFFD5D5D5),
-                        ),
-                        Expanded(
-                          child: ProfileDetailItem(
-                            label: 'Group',
-                            value: group,
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: ProfileDetailItem(
+                              label: 'Centre',
+                              value: centre,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 10),
+                          Container(
+                            width: 1,
+                            color: Color(0xFFD5D5D5),
+                          ),
+                          Expanded(
+                            child: ProfileDetailItem(
+                              label: 'Group',
+                              value: group,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 16),
                     Container(
                       height: 1,
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Color(0xAEAEAEAE), // This is the same as #AEAEAE80 with some opacity
-                          width: 1, // Border thickness
+                          color: Color(0xAEAEAEAE),
+                          width: 1,
                         ),
                       ),
                     ),
                     SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ProfileDetailItem(
-                            label: 'Member Since',
-                            value: memberSince,
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ProfileDetailItem(
+                              label: 'Member Since',
+                              value: memberSince,
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Color(0xFFD5D5D5),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: ProfileDetailItem(
-                            label: 'Active Loans',
-                            value: activeLoans,
+                          Container(
+                            width: 1,
+                            color: Color(0xFFD5D5D5),
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Color(0xFFD5D5D5),
-                        ),
-                        Expanded(
-                          child: ProfileDetailItem(
-                            label: 'Status',
-                            value: status,
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: ProfileDetailItem(
+                              label: 'Active Loans',
+                              value: activeLoans,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 10),
+                          Container(
+                            width: 1,
+                            color: Color(0xFFD5D5D5),
+                          ),
+                          Expanded(
+                            child: ProfileDetailItem(
+                              label: 'Status',
+                              value: status,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
