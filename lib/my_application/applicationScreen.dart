@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:los_cp/main.dart';
 import './loandetail_card.dart';
 import '../components/tab_type_1.dart';
+import './searchBar.dart';
+
 void main() {
   runApp(MaterialApp(
     home: applicationScreen(),
@@ -27,9 +29,10 @@ class _applicationScreenState extends State<applicationScreen> {
           title: "All(3)",
           content: Column(
             children: [
-
-              loanDetailCard(
-                LoanName:"Unnati",
+              SearchBarComp(),
+              SizedBox(height: 12),
+              LoanDetailCard(
+                LoanName:"Unnati this is the testing loan",
                 LoanNo:"2496817092",
                 LoanStatus:"Ongoing",
                 LoanOverdueAmount:1024,
@@ -39,7 +42,7 @@ class _applicationScreenState extends State<applicationScreen> {
                 LoanRejectReason:"Lorem Ipsum",
               ),
               SizedBox(height: 24),
-              loanDetailCard(
+              LoanDetailCard(
                 LoanName:"Chetana",
                 LoanNo:"2496817092",
                 LoanStatus:"Completed",
@@ -50,7 +53,7 @@ class _applicationScreenState extends State<applicationScreen> {
                 LoanRejectReason:"Lorem Ipsum",
               ),
               SizedBox(height: 24),
-              loanDetailCard(
+              LoanDetailCard(
                 LoanName:"CDL",
                 LoanNo:"2496817092",
                 LoanStatus:"Rejected",
@@ -67,7 +70,7 @@ class _applicationScreenState extends State<applicationScreen> {
           title: "Ongoing(1)",
           content: Column(
               children: [
-                loanDetailCard(
+                LoanDetailCard(
                   LoanName:"Unnati",
                   LoanNo:"2496817092",
                   LoanStatus:"Ongoing",
@@ -86,7 +89,7 @@ class _applicationScreenState extends State<applicationScreen> {
           content: Column(
               children: [
 
-                loanDetailCard(
+                LoanDetailCard(
                   LoanName:"Chetana",
                   LoanNo:"2496817092",
                   LoanStatus:"Completed",
@@ -103,7 +106,7 @@ class _applicationScreenState extends State<applicationScreen> {
           title: "Rejected(1)",
           content: Column(
               children: [
-                loanDetailCard(
+                LoanDetailCard(
                   LoanName:"CDL",
                   LoanNo:"2496817092",
                   LoanStatus:"Rejected",

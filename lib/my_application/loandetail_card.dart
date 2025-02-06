@@ -1,20 +1,16 @@
-import 'dart:ffi';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class loanDetailCard extends StatefulWidget {
+class LoanDetailCard extends StatefulWidget {
+  final String? LoanName;
+  final String? LoanNo;
+  final String? LoanStatus;
+  final num? LoanOverdueAmount;
+  final num? LoanEMIAmount;
+  final num? LoanTenure;
+  final String? LoanCollectionDay;
+  final String? LoanRejectReason;
 
-  String? LoanName;
-  String? LoanNo;
-  String? LoanStatus;
-  num? LoanOverdueAmount;
-  num? LoanEMIAmount;
-  num? LoanTenure;
-  String? LoanCollectionDay;
-  String? LoanRejectReason;
-
-  loanDetailCard({
+  LoanDetailCard({
     Key? key,
     this.LoanName,
     this.LoanNo,
@@ -27,201 +23,232 @@ class loanDetailCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<loanDetailCard> createState() => _loanDetailCardState();
+  State<LoanDetailCard> createState() => _LoanDetailCardState();
 }
 
-class _loanDetailCardState extends State<loanDetailCard> {
+class _LoanDetailCardState extends State<LoanDetailCard> {
   @override
   Widget build(BuildContext context) {
-
-    String LoanName = widget.LoanName ?? "Unknown";
-    String LoanNo = widget.LoanNo ?? "N/A";
-    String LoanStatus = widget.LoanStatus ?? "Unknown";
-    num LoanOverdueAmount = widget.LoanOverdueAmount ?? 0;
-    num LoanEMIAmount = widget.LoanEMIAmount ?? 0;
-    num LoanTenure = widget.LoanTenure ?? 0;
-    String LoanCollectionDay = widget.LoanCollectionDay ?? "Not Set";
-    String LoanRejectReason = widget.LoanRejectReason ?? "No Reason";
+    String loanName = widget.LoanName ?? "Unknown";
+    String loanNo = widget.LoanNo ?? "N/A";
+    String loanStatus = widget.LoanStatus ?? "Unknown";
+    num loanOverdueAmount = widget.LoanOverdueAmount ?? 0;
+    num loanEMIAmount = widget.LoanEMIAmount ?? 0;
+    num loanTenure = widget.LoanTenure ?? 0;
+    String loanCollectionDay = widget.LoanCollectionDay ?? "Not Set";
+    String loanRejectReason = widget.LoanRejectReason ?? "No Reason";
 
     Color statusColor;
 
-    if (LoanStatus == "Ongoing") {
+    if (loanStatus == "Ongoing") {
       statusColor = Color(0xFFD97700);
-    } else if (LoanStatus == "Completed") {
+    } else if (loanStatus == "Completed") {
       statusColor = Color(0xFF3F7D20);
-    } else if (LoanStatus == "Rejected") {
+    } else if (loanStatus == "Rejected") {
       statusColor = Color(0xFFB90000);
     } else {
-      statusColor = Colors.grey; // Default color if status is unknown
+      statusColor = Colors.grey;
     }
-
-
 
     return Center(
       child: Column(
         children: [
           Container(
             width: 328,
-            height: LoanStatus=="Rejected"?167:149,
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: statusColor,
-              ),
+              border: Border.all(color: statusColor),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 8,
-                          children: [
-                            Container(
-
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color(0xFFF9FAFB),
-                              ),
-                              child: Center(  // Center the image within the container
-                                child: Image.asset(
-                                  'assets/images/loanimg.png',
-                                  height: 24,
-                                  width: 24,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              child:Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(LoanName,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        height: 16.8/14
-                                    ),
-                                  ),
-                                  Text(LoanNo,
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF636363)
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Row(
-                              spacing: 8,
-                              children: [
-                                Container(
-                                  height: 10,
-                                  width: 10,
-                                  child:
-                                  Image.asset("assets/images/${LoanStatus}img.png",
-                                    height: 10,
-                                    width: 10,
-                                  ),
-
-                                ),
-                                Text(LoanStatus,
-                                  style: TextStyle(
-                                    color: statusColor,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 10,
-                                    height: 12/10,
-                                  ),
-                                )
-                              ],
-                            ),
-                            LoanOverdueAmount > 0 ? Container(
-
-                              padding: EdgeInsets.all(4),
-                              margin: EdgeInsets.only(top:4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                  color: statusColor,
-                                ),
-                              ),
-                              child: LoanOverdueAmount > 0 ? Text("OD of ${LoanOverdueAmount}", style: TextStyle(fontSize: 10,height: 12/10, fontWeight: FontWeight.w700,color: statusColor)) : SizedBox.shrink(),
-                            ):SizedBox.shrink(),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: 12),
-                      child:Divider(height: 1, color: statusColor,),
-                    )
-
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Color(0xFFF9FAFB),
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/loanimg.png',
+                          height: 24,
+                          width: 24,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            loanName,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              height: 16.8 / 14,
+                            ),
+                            softWrap: true,
+                          ),
+                          Text(
+                            loanNo,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF636363),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          children: [
+                            Image.asset(
+                              "assets/images/${loanStatus}img.png",
+                              height: 10,
+                              width: 10,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              loanStatus,
+                              style: TextStyle(
+                                color: statusColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 10,
+                                height: 12 / 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (loanOverdueAmount > 0)
+                          Container(
+                            padding: EdgeInsets.all(4),
+                            margin: EdgeInsets.only(top: 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: statusColor),
+                            ),
+                            child: Text(
+                              "OD of ₹${loanOverdueAmount}",
+                              style: TextStyle(
+                                fontSize: 10,
+                                height: 12 / 10,
+                                fontWeight: FontWeight.w700,
+                                color: statusColor,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
-
-                SizedBox(height: 16,),
-
+                SizedBox(height: 12),
+                Divider(height: 1, color: statusColor),
+                SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
                       children: [
-                        Text("EMI Amount",style: TextStyle(color: Color(0xFF636363),fontSize: 12,height: 14.4/12,fontWeight: FontWeight.w500),),
-                        Text("₹${LoanEMIAmount}",style: TextStyle(color: Color(0xFF101828),fontSize: 12,fontWeight: FontWeight.w600,height: 14.4/12))
+                        Text(
+                          "EMI Amount",
+                          style: TextStyle(
+                            color: Color(0xFF636363),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "₹${loanEMIAmount}",
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
                       children: [
-                        Text("Tenure",style: TextStyle(color: Color(0xFF636363),fontSize: 12,height: 14.4/12,fontWeight: FontWeight.w500),),
-                        Text("${LoanTenure}weeks",style: TextStyle(color: Color(0xFF101828),fontSize: 12,fontWeight: FontWeight.w600,height: 14.4/12))
+                        Text(
+                          "Tenure",
+                          style: TextStyle(
+                            color: Color(0xFF636363),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "${loanTenure} weeks",
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
                       children: [
-                        Text("Collection day",style: TextStyle(color: Color(0xFF636363),fontSize: 12,height: 14.4/12,fontWeight: FontWeight.w500),),
-                        Text("${LoanCollectionDay}",style: TextStyle(color: Color(0xFF101828),fontSize: 12,fontWeight: FontWeight.w600,height: 14.4/12))
+                        Text(
+                          "Collection day",
+                          style: TextStyle(
+                            color: Color(0xFF636363),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          loanCollectionDay,
+                          style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 ),
-
-                LoanStatus=="Rejected"?Column(children: [SizedBox(height: 12,),Row(
-                  children: [
-                    Text("Reason: ",style: TextStyle(height: 14.4/12,fontWeight: FontWeight.w500,fontSize: 12,color: Color(0xFF636363))),
-                    Text(LoanRejectReason,style: TextStyle(height: 14.4/12,fontWeight: FontWeight.w400,fontSize: 12,color: Color(0xFF101828)))
-                  ],
-                )],):SizedBox.shrink(),
-
+                if (loanStatus == "Rejected")
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Reason: ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: Color(0xFF636363),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            loanRejectReason,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: Color(0xFF101828),
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
