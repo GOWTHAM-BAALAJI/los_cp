@@ -19,7 +19,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+      Scaffold(
       appBar: ProfileAppBar(
         name: 'Anika',
         id: '94556387',

@@ -24,7 +24,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async =>false,
+      child:Scaffold(
       body: SingleChildScrollView(
       child:Padding(
         padding: const EdgeInsets.all(16.0),
@@ -250,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
-      ));
+      )));
   }
 
   Widget _buildStatusItem(String number, String status, Color color) {
