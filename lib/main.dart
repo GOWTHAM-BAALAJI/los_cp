@@ -31,14 +31,6 @@ class MyApp extends StatelessWidget {
       title: 'LOS',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginPage(),
-        '/portfolio': (context) => applicationScreen(),
-        '/transactions': (context) => TransactionsPage(),
-        '/profile': (context) => ProfilePage(),
-        // '/home': (context) => HomePage(),
-      },
       home: isLoggedOut ? const LoginPage() : HomePage(),
     );
   }
