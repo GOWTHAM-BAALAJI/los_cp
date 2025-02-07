@@ -196,7 +196,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     color: Colors.grey,
                                     margin: const EdgeInsets.symmetric(horizontal: 8),
                                   ),
-                                  _buildStatusItem('${responseData?['loanDetails']?.length ?? 0}', 'Disbursed', Color(0xff00916e)),
+                                  _buildStatusItem('${responseData?['loanDetails']?.where((loan) => loan['loanStatus'] != 'Rejected').length ?? 0}', 'Disbursed', Color(0xff00916e)),
                                   Container(
                                     height: 70,
                                     width: 1,
