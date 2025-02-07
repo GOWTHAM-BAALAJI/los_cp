@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'user_details.dart';
-import 'digital_loan_card.dart';
+import 'loan_card_tabs.dart';
 import '../components/tab_type_1.dart';
 import '../components/tab_type_2.dart';
 import '../transactions/main_page.dart';
@@ -85,7 +85,7 @@ class ProfilePageState extends State<ProfilePage> {
         content: responseData != null && responseData!['loanDetails'].isNotEmpty
             ? Container(
           margin: EdgeInsets.zero,
-          height: 600,
+          // height: 300,
           child: ListView.builder(
             itemCount: responseData!['loanDetails']
                 .where((loan) => loan['loanStatus'] == 'Active')
@@ -128,7 +128,7 @@ class ProfilePageState extends State<ProfilePage> {
         content: responseData != null && responseData!['loanDetails'].isNotEmpty
             ? Container(
           margin: EdgeInsets.zero,
-          height: 600,
+          // height: 600,
           child: ListView.builder(
             itemCount: responseData!['loanDetails']
                 .where((loan) => loan['loanStatus'] != 'Active')
@@ -189,33 +189,36 @@ class ProfilePageState extends State<ProfilePage> {
                   time: "12:34 PM",
                   comment: "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor",
                 ),
+                CommentCard(
+                  profilePic: "assets/images/female_profilepic.png",
+                  name: "Rohit Thiru",
+                  date: "Apr 11, 2024",
+                  time: "12:34 PM",
+                  comment: "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor",
+                ),
+                CommentCard(
+                  profilePic: "assets/images/female_profilepic.png",
+                  name: "Rohit Thiru",
+                  date: "Apr 11, 2024",
+                  time: "12:34 PM",
+                  comment: "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor",
+                ),
+                CommentCard(
+                  profilePic: "assets/images/female_profilepic.png",
+                  name: "Rohit Thiru",
+                  date: "Apr 11, 2024",
+                  time: "12:34 PM",
+                  comment: "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor",
+                ),
               ],
             ),
           ),
         ),
         TabItem1(
           title: 'Digital Loan Card',
-          content: isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : responseData == null
-              ? const Center(child: Text('No data available'))
-              : InfoCard(
-            key: ValueKey(responseData.hashCode),
-            name: responseData!["customerDetails"][0]["CustomerName"]?.toString() ?? '',
-            id: responseData!["customerDetails"][0]["CustomerId"]?.toString() ?? '',
-            phone: responseData!["customerDetails"][0]["MobileNo"]?.toString() ?? '',
-            guardian: responseData!["customerDetails"][0]["FatherSpouseName"]?.toString() ?? '',
-            insuranceCoveredFor: "${responseData!["customerDetails"][0]["CustomerName"] ?? ''} & ${responseData!["customerDetails"][0]["FatherSpouseName"] ?? ''}",
-            accidentalApplicant: responseData!["customerDetails"][0]["NomineeName"]?.toString() ?? '',
-            accidentalPremium: responseData!["loanDetails"][0]["insurancePremium"]?.toString() ?? '',
-            disbursementDate: _formatDate(responseData!["loanDetails"].last["disbursementDate"]!.toString()) ?? '',
-            interestRate: responseData!["loanDetails"][0]["roi"]?.toString() ?? '',
-            lpf: responseData!["loanDetails"][0]["processingFee"]?.toString() ?? '',
-            loanRepayment: responseData!["loanDetails"][0]["paymentFrequency"]?.toString() ?? '',
-            center: responseData!["customerDetails"][0]["CenterName"]?.toString() ?? '',
-            group: responseData!["customerDetails"][0]["GroupName"]?.toString() ?? '',
-            insurancePremium: responseData!["loanDetails"][0]["insurancePremium"]?.toString() ?? '',
-            loanAmount: totalDisbursedAmount.toStringAsFixed(2),
+          content: LoanCardsPage(
+            responseData: responseData,
+            isLoading: isLoading,
           ),
         ),
       ];
@@ -307,64 +310,54 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade100,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              GoBack(title: "Profile",onNavigate: widget.onNavigate),
-              if (isLoading)
-                ProfileDetailsCard(
-                  name: 'Loading...',
-                  id: 'Loading...',
-                  village: 'Loading...',
-                  centre: 'Loading...',
-                  group: 'Loading...',
-                  memberSince: 'Loading...',
-                  activeLoans: 'Loading...',
-                  status: 'Loading...',
-                  profileImageUrl: 'assets/images/female_profilepic.png',
-                )
-              else if (responseData != null)
-                ProfileDetailsCard(
-                  name: responseData!["customerDetails"][0]["CustomerName"],
-                  id: responseData!["customerDetails"][0]["CustomerId"].toString(),
-                  village: responseData!["customerDetails"][0]["village"],
-                  centre: responseData!["customerDetails"][0]["CenterName"],
-                  group: responseData!["customerDetails"][0]["GroupName"],
-                  memberSince: _formatDate(responseData!["loanDetails"][0]["disbursementDate"]),
-                  activeLoans: responseData!["loanDetails"][0]["loanStatus"] == "Active" ? "1" : "0",
-                  status: "Active",
-                  profileImageUrl: 'assets/images/female_profilepic.png', // Placeholder image URL
-                )
-              else
-                ProfileDetailsCard(
-                  name: 'Loading...',
-                  id: 'Loading...',
-                  village: 'Loading...',
-                  centre: 'Loading...',
-                  group: 'Loading...',
-                  memberSince: 'Loading...',
-                  activeLoans: 'Loading...',
-                  status: 'Loading...',
-                  profileImageUrl: 'assets/images/female_profilepic.png',
-                ),
-              // ProfileDetailsCard(
-              //   name: 'Anika Rehman',
-              //   id: '849557572',
-              //   lo: 'Rohit Thru',
-              //   village: 'Puslod',
-              //   centre: 'Jhulod-7469760',
-              //   group: '19-JA-SC-G4',
-              //   memberSince: 'Apr 12, 2023',
-              //   activeLoans: '1',
-              //   status: 'Standard',
-              //   profileImageUrl: 'assets/images/female_profilepic.png',
-              // ),
-              SizedBox(height: 16,),
-              TabComponent1(tabs1: tabs1),
-            ],
-          )
-        )
+      backgroundColor: Colors.grey.shade100,
+      body: SafeArea(
+        child: Column(  // Changed from SingleChildScrollView to Column
+          children: [
+            GoBack(title: "Profile", onNavigate: widget.onNavigate),
+            if (isLoading)
+              ProfileDetailsCard(
+                name: 'Loading...',
+                id: 'Loading...',
+                village: 'Loading...',
+                centre: 'Loading...',
+                group: 'Loading...',
+                memberSince: 'Loading...',
+                activeLoans: 'Loading...',
+                status: 'Loading...',
+                profileImageUrl: 'assets/images/female_profilepic.png',
+              )
+            else if (responseData != null)
+              ProfileDetailsCard(
+                name: responseData!["customerDetails"][0]["CustomerName"],
+                id: responseData!["customerDetails"][0]["CustomerId"].toString(),
+                village: responseData!["customerDetails"][0]["village"],
+                centre: responseData!["customerDetails"][0]["CenterName"],
+                group: responseData!["customerDetails"][0]["GroupName"],
+                memberSince: _formatDate(responseData!["loanDetails"][0]["disbursementDate"]),
+                activeLoans: responseData!["loanDetails"][0]["loanStatus"] == "Active" ? "1" : "0",
+                status: "Active",
+                profileImageUrl: 'assets/images/female_profilepic.png',
+              )
+            else
+              ProfileDetailsCard(
+                name: 'Loading...',
+                id: 'Loading...',
+                village: 'Loading...',
+                centre: 'Loading...',
+                group: 'Loading...',
+                memberSince: 'Loading...',
+                activeLoans: 'Loading...',
+                status: 'Loading...',
+                profileImageUrl: 'assets/images/female_profilepic.png',
+              ),
+            SizedBox(height: 16),
+            Expanded(  // Add this to give remaining space to TabComponent1
+              child: TabComponent1(tabs1: tabs1),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

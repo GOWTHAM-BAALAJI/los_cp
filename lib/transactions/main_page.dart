@@ -163,31 +163,26 @@ class TransactionsPageState extends State<TransactionsPage> {
               ? const Center(child: CircularProgressIndicator())
               : transactionsByMonth[monthYear] == null || transactionsByMonth[monthYear]!.isEmpty
               ? const Center(child: Text('No data available'))
-              : Container(
-            margin: EdgeInsets.zero,
-            height: 600,
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              itemCount: transactionsByMonth[monthYear]!.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> transaction =
-                transactionsByMonth[monthYear]![index] is Map<String, dynamic>
-                    ? transactionsByMonth[monthYear]![index]
-                    : {};
+              : ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            itemCount: transactionsByMonth[monthYear]!.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> transaction = transactionsByMonth[monthYear]![index] is Map<String, dynamic>
+                  ? transactionsByMonth[monthYear]![index]
+                  : {};
 
-                String customerName = responseData!["customerDetails"][0]["CustomerName"]?.toString() ?? '';
-                String particulars = transaction['particulars']?.toString() ?? 'No Title';
+              String customerName = responseData!["customerDetails"][0]["CustomerName"]?.toString() ?? '';
+              String particulars = transaction['particulars']?.toString() ?? 'No Title';
 
-                return TransactionItemWidget(
-                  title: particulars,
-                  username: customerName,
-                  amount: getTransactionAmount(transaction),
-                  date: formatDate(transaction['date']?.toString()),
-                  status: getTransactionStatus(particulars),
-                );
-              },
-            ),
+              return TransactionItemWidget(
+                title: particulars,
+                username: customerName,
+                amount: getTransactionAmount(transaction),
+                date: formatDate(transaction['date']?.toString()),
+                status: getTransactionStatus(particulars),
+              );
+            },
           ),
         );
       }).toList();
@@ -236,16 +231,17 @@ class TransactionsPageState extends State<TransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey.shade100,
-      child: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+      body: SafeArea(
         child: Column(
           children: [
-            // GoBack(title: "Transactions"),
-            TabComponent2(tabs2: tabs2_transactions),
+            Expanded(
+              child: TabComponent2(tabs2: tabs2_transactions),
+            ),
           ],
         ),
-      ),
+      )
     );
   }
 }

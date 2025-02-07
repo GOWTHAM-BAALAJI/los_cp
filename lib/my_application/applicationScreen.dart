@@ -1,10 +1,10 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import './loandetail_card.dart';
 import '../components/tab_type_1.dart';
 import 'dart:convert';
-import './searchBar.dart';
 
 import '../components/goback_button.dart';
 // void main() {
@@ -38,13 +38,35 @@ class applicationScreen extends StatefulWidget {
 }
 
 class _applicationScreenState extends State<applicationScreen> {
-  late List<TabItem1> tabs1 = [];
-  List<dynamic> loanDetails = [];
-
+  late List<TabItem1> tabs1;
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        isLoading = false;
+      });
+    });
     _fetchApiResponse();
+    tabs1 = [
+      TabItem1(
+        title: 'Ongoing()',
+        content: Center(child: Text('Loading...')),
+      ),
+      TabItem1(
+        title: 'Completed()',
+        content: Center(child: Text('Loading...')),
+      ),
+      TabItem1(
+        title: 'Rejected()',
+        content: Center(child: Text('Loading...')),
+      ),
+      TabItem1(
+        title: "All()",
+        content: Center(child: Text('Loading...')),
+      ),
+    ];
   }
 
   Future<void> _fetchApiResponse() async {
@@ -54,36 +76,15 @@ class _applicationScreenState extends State<applicationScreen> {
       final apiResponse = Map<String, dynamic>.from(jsonDecode(apiResponseString));
 
       setState(() {
-        loanDetails = apiResponse['loanDetails'];
+        var loanDetails = apiResponse['loanDetails'];
 
         tabs1 = [
           TabItem1(
-            title: "All(${loanDetails.length})",
-            content: Column(
-              children: loanDetails.map((loan) {
-                String installmentDate = loan['repaymentSchedule'][0]['installmentDate'];
-                String collectionDay = getDayOfWeek(installmentDate);
-
-                return LoanDetailCard(
-                  LoanName: "Loan ${loan['productName']}",
-                  LoanNo: loan['loanDisplayId'].toString(),
-                  LoanStatus: loan['loanStatus'],
-                  LoanOverdueAmount: loan['overdueAmount'],
-                  LoanEMIAmount: loan['emiAmount'],
-                  LoanTenure: loan['noOfInstallments'],
-                  LoanCollectionDay: collectionDay,
-                  LoanPaymentFrequency: loan['paymentFrequency'],
-                  LoanRejectReason: loan['loanStatus'] == "Rejected" ? "Not Approved" : "",
-                );
-              }).toList(),
-            ),
-          ),
-          TabItem1(
             title: "Ongoing(${loanDetails.where((loan) => loan['loanStatus'] == 'Active' || loan['loanStatus'] == 'Ongoing').length})",
-            content: Column(
+            content: isLoading ? Center(child: CircularProgressIndicator()) : Column(
               children: loanDetails
                   .where((loan) => loan['loanStatus'] == 'Active')
-                  .map((loan) {
+                  .map<Widget>((loan) {
                 String installmentDate = loan['repaymentSchedule'][0]['installmentDate'];
                 String collectionDay = getDayOfWeek(installmentDate);
 
@@ -103,10 +104,10 @@ class _applicationScreenState extends State<applicationScreen> {
           ),
           TabItem1(
             title: "Completed(${loanDetails.where((loan) => loan['loanStatus'] == 'Completed').length})",
-            content: Column(
+            content: isLoading ? Center(child: CircularProgressIndicator()) : Column(
               children: loanDetails
                   .where((loan) => loan['loanStatus'] == 'Completed')
-                  .map((loan) {
+                  .map<Widget>((loan) {
                 String installmentDate = loan['repaymentSchedule'][0]['installmentDate'];
                 String collectionDay = getDayOfWeek(installmentDate);
 
@@ -126,10 +127,31 @@ class _applicationScreenState extends State<applicationScreen> {
           ),
           TabItem1(
             title: "Rejected(${loanDetails.where((loan) => loan['loanStatus'] == 'Rejected').length})",
-            content: Column(
+            content: isLoading ? Center(child: CircularProgressIndicator()) : Column(
               children: loanDetails
                   .where((loan) => loan['loanStatus'] == 'Rejected')
-                  .map((loan) {
+                  .map<Widget>((loan) {
+                String installmentDate = loan['repaymentSchedule'][0]['installmentDate'];
+                String collectionDay = getDayOfWeek(installmentDate);
+
+                return LoanDetailCard(
+                  LoanName: "Loan ${loan['productName']}",
+                  LoanNo: loan['loanDisplayId'].toString(),
+                  LoanStatus: loan['loanStatus'],
+                  LoanOverdueAmount: loan['overdueAmount'],
+                  LoanEMIAmount: loan['emiAmount'],
+                  LoanTenure: loan['noOfInstallments'],
+                  LoanCollectionDay: collectionDay,
+                  LoanPaymentFrequency: loan['paymentFrequency'],
+                  LoanRejectReason: loan['loanStatus'] == "Rejected" ? "Not Approved" : "",
+                );
+              }).toList(),
+            ),
+          ),
+          TabItem1(
+            title: "All(${loanDetails.length})",
+            content: isLoading ? Center(child: CircularProgressIndicator()) : Column(
+              children: loanDetails.map<Widget>((loan) {
                 String installmentDate = loan['repaymentSchedule'][0]['installmentDate'];
                 String collectionDay = getDayOfWeek(installmentDate);
 
@@ -157,20 +179,18 @@ class _applicationScreenState extends State<applicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
+        backgroundColor: Colors.grey.shade100,
+        body: SafeArea(
           child: Column(
             children: [
               GoBack(title: "Portfolio", onNavigate: widget.onNavigate),
-              Row(
-                children: [
-                  tabs1.isNotEmpty ? TabComponent1(tabs1: tabs1) : Center(child: CircularProgressIndicator()),
-                ],
+              SizedBox(height: 10,),
+              Expanded(
+                child: TabComponent1(tabs1: tabs1),
               ),
             ],
           ),
-        ),
-      ),
+        )
     );
   }
 }

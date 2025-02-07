@@ -81,7 +81,9 @@ class _TabComponent2State extends State<TabComponent2> {
           ),
         ),
         SizedBox(height: 10),
-        widget.tabs2[_selectedIndex].content,
+        Expanded(
+          child: widget.tabs2[_selectedIndex].content,
+        )
       ],
     );
   }

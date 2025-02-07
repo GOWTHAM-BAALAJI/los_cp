@@ -69,7 +69,9 @@ class _TabComponent1State extends State<TabComponent1> {
           ),
         ),
         SizedBox(height: 10),
-        widget.tabs1[_selectedIndex].content,
+        Expanded(  // Add this Expanded widget
+          child: widget.tabs1[_selectedIndex].content,
+        ),
       ],
     );
   }
